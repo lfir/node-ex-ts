@@ -109,6 +109,10 @@ app.get('/pagecount', function (req, res) {
   }
 });
 
+app.get('/status', function(req, res) {
+  res.json({ status: 'API Lab is Online.' });
+});
+
 // error handling
 app.use(function(err, req, res, next){
   console.error(err.stack);
