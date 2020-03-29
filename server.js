@@ -110,7 +110,7 @@ app.get('/pagecount', function (req, res) {
 });
 
 app.get('/status', function(req, res) {
-  res.json({ status: 'API Lab is Online.' });
+  res.json({ status: 'API Lab is online.' });
 });
 
 // error handling
