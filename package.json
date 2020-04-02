@@ -4,14 +4,13 @@
   "description": "Node.js sample app for OpenShift 3",
   "main": "server.js",
   "dependencies": {
-    "chai": "^3.5.0",
-    "chai-http": "^2.0.1",
-    "ejs": "^2.4.1",
-    "express": "^4.13.4",
-    "mocha": "^2.4.5",
-    "mongodb": "^2.1.16",
-    "morgan": "^1.7.0",
-    "object-assign":"4.1.0"
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.7",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "jest": "^25.2.4"
   },
   "engine": {
     "node": "*",
@@ -19,16 +18,16 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "IP=0.0.0.0 PORT=3030 mocha --timeout 5000 tests/*_test.js"
+    "test": "jest tests/*_test.js"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/sclorg/nodejs-ex.git"
+    "url": "https://github.com/Asta1986/nodejs-ex"
   },
-  "author": "Steve Speicher <sspeiche@gmail.com>",
+  "author": "Asta1986 <psljp@protonmail.com>",
   "license": "CC-BY-1.0",
   "bugs": {
-    "url": "http://github.com/sclorg/nodejs-ex/issues"
+    "url": "https://github.com/Asta1986/nodejs-ex/issues"
   },
-  "homepage": "http://github.com/sclorg/nodejs-ex"
+  "homepage": "http://lab-api-projectzero.apps.ca-central-1.starter.openshift-online.com"
 }
