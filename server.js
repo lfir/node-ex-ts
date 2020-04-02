@@ -1,4 +1,4 @@
-const cors    = require('cors');
+const cors    = require('cors'),
       express = require('express'),
       app     = express(),
       morgan  = require('morgan');
