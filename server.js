@@ -13,9 +13,9 @@ mongoose.connect(process.env.MONGO_URI);
 
 const corsOptions = {
   origin: function(origin, callback) {
-    const allowedOrigins = process.env.ALLOWED_HOSTS.split(' ');
-    const allowAccess = (!origin && Boolean(process.env.ALLOW_NO_ORIGIN)) ||
-                        (allowedOrigins.indexOf(origin) !== -1);
+    const allowedOrigins = process.env.ALLOWED_HOSTS.split(' '),
+          allowNoOrigin = (!origin || origin === 'null') && Boolean(process.env.ALLOW_NO_ORIGIN),
+          allowAccess = allowNoOrigin || allowedOrigins.includes(origin);
     if (allowAccess) {
       callback(null, true);
     } else {
@@ -44,17 +44,6 @@ app.get('/api/status', function(req, res) {
   res.json(status);
 });
 
-app.get('/api/tst', (req, res, next) => {
-  ctrl.storePageView(req.hostname, req.originalUrl, req.headers["accept-language"], req.ip,
-    (err, data) => {
-      if (err) {
-        next(err);
-      }
-      res.json(data);
-    }
-  );
-});
-
 app.post('/api/newpageview', function(req, res, next) {
   const host = req.body.host,
         path = req.body.path;
@@ -63,7 +52,8 @@ app.post('/api/newpageview', function(req, res, next) {
       if (err) {
         next(err);
       }
-      res.json(data);
+      console.log('stored event:', data);
+      res.sendStatus(200);
     }
   );
 });

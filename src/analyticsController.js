@@ -17,14 +17,12 @@ const schema = new Schema({
 
 const PageView = mongoose.model('PageView', schema);
 
-exports.storePageView = (hostname, path, accLang, ip, done) => {
-  console.log(hostname);
-  console.log(path);
-  console.log(accLang);
-  console.log(ip);
+exports.storePageView = (host, path, accLang, ip, done) => {
   const geo = geoip.lookup(ip);
-  console.log(geo);
-  const newPageViewInfo = { host: hostname, path: path, language: accLang, country: ip };
+  const newPageViewInfo = { host: host, path: path, language: accLang };
+  if (geo) {
+    newPageViewInfo.country = geo.country;
+  }
   const newPageView = new PageView(newPageViewInfo);
   newPageView.save((err, data) => {
     done(err, data);
