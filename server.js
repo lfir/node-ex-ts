@@ -42,6 +42,7 @@ app.get('/api/status', function(req, res) {
 });
 
 app.post('/api/newpageview', function(req, res, next) {
+  console.log('body:', req.body);
   const host = req.body.host,
         path = req.body.path,
         ip   = req.body.ip;
