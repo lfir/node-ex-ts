@@ -12,6 +12,7 @@ mongoose.connect(process.env.MONGO_URI);
 
 app.use(function (req, res, next) {
   const inCorsWhitelist = process.env.ALLOWED_HOSTS.split(' ').includes(req.headers.origin);
+  console.log('allowed hosts:', process.env.ALLOWED_HOSTS);
   const allowAnyOrigin = Boolean(process.env.ALLOW_ANY_ORIGIN);
   console.log('origin:', req.headers.origin);
   console.log('inCorsWhitelist:', inCorsWhitelist);
