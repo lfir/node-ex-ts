@@ -19,7 +19,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "jest tests/*_test.js"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
