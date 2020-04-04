@@ -11,22 +11,18 @@ dotenv.config();
 mongoose.connect(process.env.MONGO_URI);
 
 app.use(function (req, res, next) {
-
-  // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'https://asta86.gitlab.io');
-
-  // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-  // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  // Pass to next layer of middleware
-  next();
+  console.log('request origin header:', req.headers.origin);
+  const inCorsWhitelist = process.env.ALLOWED_HOSTS.split(' ').includes(req.headers.origin);
+  const allowAnyOrigin = Boolean(process.env.ALLOW_ANY_ORIGIN);
+  if (inCorsWhitelist || allowAnyOrigin) {
+    let origin = inCorsWhitelist ? req.headers.origin : '*';
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  } else {
+    next(new Error('Access denied by CORS policy.'));
+  }
 });
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '/public/')));
