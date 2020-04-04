@@ -1,7 +1,7 @@
 const dotenv   = require('dotenv'),
-      geoip = require('geoip-lite'),
+      geoip    = require('geoip-lite'),
       mongoose = require('mongoose'),
-      Schema = mongoose.Schema;
+      Schema   = mongoose.Schema;
 
 dotenv.config();
 
