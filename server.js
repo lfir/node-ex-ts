@@ -11,7 +11,6 @@ dotenv.config();
 mongoose.connect(process.env.MONGO_URI);
 
 app.use(function (req, res, next) {
-  console.log('request origin header:', req.headers.origin);
   const inCorsWhitelist = process.env.ALLOWED_HOSTS.split(' ').includes(req.headers.origin);
   const allowAnyOrigin = Boolean(process.env.ALLOW_ANY_ORIGIN);
   if (inCorsWhitelist || allowAnyOrigin) {
@@ -44,8 +43,9 @@ app.get('/api/status', function(req, res) {
 
 app.post('/api/newpageview', function(req, res, next) {
   const host = req.body.host,
-        path = req.body.path;
-  ctrl.storePageView(host, path, req.headers['accept-language'], req.ip,
+        path = req.body.path,
+        ip   = req.body.ip;
+  ctrl.storePageView(host, path, req.headers['accept-language'], ip,
     (err, data) => {
       if (err) {
         next(err);

@@ -19,6 +19,8 @@ const PageView = mongoose.model('PageView', schema);
 
 exports.storePageView = (host, path, accLang, ip, done) => {
   const geo = geoip.lookup(ip);
+  //console.log('ip:', ip);
+  //console.log('geo:', geo);
   const newPageViewInfo = { host: host, path: path, language: accLang };
   if (geo) {
     newPageViewInfo.country = geo.country;
