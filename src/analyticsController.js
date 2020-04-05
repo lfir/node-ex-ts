@@ -1,11 +1,6 @@
-const dotenv   = require('dotenv'),
-      geoip    = require('geoip-lite'),
+const geoip    = require('geoip-lite'),
       mongoose = require('mongoose'),
       Schema   = mongoose.Schema;
-
-dotenv.config();
-
-mongoose.connect(process.env.MONGO_URI);
 
 const schema = new Schema({
     host: { type: String, required: true },
@@ -48,5 +43,3 @@ exports.storePageView = (host, path, accLangs, ip, done) => {
     done(err, data);
   }); 
 }
-
-exports.mongoose = mongoose;

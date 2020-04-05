@@ -24,13 +24,3 @@ test('normalizePath replces path "/index.html" with "/"', () => {
     const path = '/index.html';
     expect(ctrl.normalizePath(path)).toMatch(path.substring(0, 1));
 });
-
-
-afterAll(async () => {
-    try {
-      await ctrl.mongoose.disconnect();
-    } catch (error) {
-      console.log(`Registered error: ${error}`);
-      throw error;
-    }
-});
