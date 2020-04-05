@@ -24,3 +24,18 @@ test('normalizePath replces path "/index.html" with "/"', () => {
     const path = '/index.html';
     expect(ctrl.normalizePath(path)).toMatch(path.substring(0, 1));
 });
+
+test('normalizePath does not modify ".html" occurrences not at the end of the string', () => {
+  const path = '/howto/buildindex.htmlfromtemplates';
+  expect(ctrl.normalizePath(path)).toMatch(path);
+});
+
+test('normalizePath does not modify "/index" occurrences that are not the whole path', () => {
+  const path = '/howto/index/templates';
+  expect(ctrl.normalizePath(path)).toMatch(path);
+});
+
+test('normalizePath on an empty string is an empty string', () => {
+  const path = '';
+  expect(ctrl.normalizePath(path)).toMatch(path);
+});
