@@ -27,19 +27,21 @@ exports.normalizePath = (path) => {
   return norm.toLowerCase();
 }
 
-exports.storePageView = (host, path, accLangs, ip, done) => {
-  const geo = geoip.lookup(ip);
-  console.log('ip:', ip);
-  console.log('geo:', geo);
-  const newPageViewInfo = { host: host, path: this.normalizePath(path) };
-  if (accLangs) {
-    newPageViewInfo.language = this.normalizeLanguage(accLangs);
+exports.storePageView = async (host, path, accLangs, ip) => {
+  try {
+    const geo = geoip.lookup(ip);
+    console.log('ip:', ip);
+    console.log('geo:', geo);
+    const newPageViewInfo = { host: host, path: this.normalizePath(path) };
+    if (accLangs) {
+      newPageViewInfo.language = this.normalizeLanguage(accLangs);
+    }
+    if (geo) {
+      newPageViewInfo.country = geo.country.toLowerCase();
+    }
+    const newPageView = new PageView(newPageViewInfo);
+    return await newPageView.save(); 
+  } catch (err) {
+    throw err;
   }
-  if (geo) {
-    newPageViewInfo.country = geo.country.toLowerCase();
-  }
-  const newPageView = new PageView(newPageViewInfo);
-  newPageView.save((err, data) => {
-    done(err, data);
-  }); 
 }

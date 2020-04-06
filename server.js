@@ -35,20 +35,19 @@ app.get('/api/status', function(req, res) {
 // Restricted endpoints
 app.use(corsConfig.allowOrBlockRequest);
 
-app.post('/api/newpageview', function(req, res, next) {
-  console.log('req body:', req.body);
-  const host = req.body.host,
-        path = req.body.path,
-        ip   = req.body.ip;
-  ctrl.storePageView(host, path, req.headers['accept-language'], ip,
-    (err, data) => {
-      if (err) {
-        next(err);
-      }
-      console.log('stored event:', data);
-      res.sendStatus(200);
-    }
-  );
+app.post('/api/newpageview', async (req, res, next) => {
+  try {
+    console.log('req body:', req.body);
+    const host = req.body.host,
+          path = req.body.path,
+          acl  = req.headers['accept-language'],
+          ip   = req.body.ip,
+          event = await ctrl.storePageView(host, path, acl, ip);
+          console.log('stored event:', event);
+          res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
 });
 //
 
