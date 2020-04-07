@@ -52,6 +52,7 @@ app.post('/api/newpageview', async (req, res, next) => {
 
 app.get('/api/pageviews', async (req, res, next) => {
   try {
+    console.log('req query string:', req.query);
     const pageviews = await ctrl.retrievePageViews(req.query);
     res.json(pageviews);
   } catch (err) {

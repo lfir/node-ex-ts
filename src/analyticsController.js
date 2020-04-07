@@ -78,10 +78,8 @@ exports.getChosenOptions = (queryParams) => {
 }
 
 exports.searchBetweenDates = (queryParams) => {
-  const fromDateParts = queryParams.from.split('-').map(dp => Number(dp)),
-        toDateParts = queryParams.to.split('-').map(dp => Number(dp)),
-        from = new Date(fromDateParts[0], (fromDateParts[1] - 1), fromDateParts[2]).setHours(0, 0, 0),
-        to = new Date(toDateParts[0], (toDateParts[1] - 1), toDateParts[2]).setHours(23, 59, 59);
+  const from = new Date(queryParams.from + 'T00:00:00Z'),
+        to = new Date(queryParams.to + 'T23:59:59Z');
   return PageView.find({ date: { '$gte': from, '$lte': to } });
 }
 
