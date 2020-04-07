@@ -39,3 +39,23 @@ test('normalizePath on an empty string is an empty string', () => {
   const path = '';
   expect(ctrl.normalizePath(path)).toMatch(path);
 });
+
+test('getChosenOptions for empty query string is an empty string', () => {
+  const qs = {};
+  expect(ctrl.getChosenOptions(qs)).toMatch('');
+});
+
+test('getChosenOptions for query string with "limit" parameter returns "limit"', () => {
+  const qs = { pageSize: 20, limit: 5, CSRF_TOKEN: 'RPYH' };
+  expect(ctrl.getChosenOptions(qs)).toMatch('limit');
+});
+
+test('getChosenOptions for query string with "from" & "to" parameters returns "fromTo"', () => {
+  const qs = { pageSize: 20, from: '2010-01-01', CSRF_TOKEN: 'RPYH', to: '2010-12-11' };
+  expect(ctrl.getChosenOptions(qs)).toMatch('fromTo');
+});
+
+test('getChosenOptions for query string with "from", "to" & "limit" parameters returns "fromToAndLimit"', () => {
+  const qs = { limit: 5,pageSize: 20, from: '2010-01-01', CSRF_TOKEN: 'RPYH', to: '2010-12-11' };
+  expect(ctrl.getChosenOptions(qs)).toMatch('fromToAndLimit');
+});
