@@ -137,6 +137,10 @@ p {
     text-align: center;
 }
 
+.title-container {
+    background-image: url(../img/email_icon.png);
+}
+
 .tm-social-link {
     border-color: #FFFFFF;
     color: black;
@@ -198,7 +202,7 @@ p {
 }
 
 .cb-slideshow li:nth-child(1) { 
-    background-image: url(../img/letter_bg_01.jpg)
+    background-image: url(../img/letter_bg_01.jpg);
 }
 
 .cb-slideshow li:nth-child(2) { 
@@ -256,23 +260,23 @@ p {
 	    transform: scale(1.40);
     }
     
-	100% { opacity: 0 }
+	100% { opacity: 0; }
 }
 
 
 @media screen and (max-width: 1140px) { 
-    .cb-slideshow li div h3 { font-size: 140px }
+    .cb-slideshow li div h3 { font-size: 140px; }
 }
 
 @media screen and (max-width: 600px) { 
-    .cb-slideshow li div h3 { font-size: 80px }
+    .cb-slideshow li div h3 { font-size: 80px; }
 	.tm-content {
 		margin-top: 80px;
 	}
 }
 
 @media screen and (max-width: 576px) { 
-    .cb-slideshow li div h3 { font-size: 80px }
+    .cb-slideshow li div h3 { font-size: 80px; }
 	
 	.tm-btn-subscribe {
 		margin-top: 20px;
