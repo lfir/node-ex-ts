@@ -151,15 +151,8 @@ p {
     color: #FFFFFF;
 }
 
-.footer-link {
-    margin: 20px;
-	font-size: 18px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    color: white;
-    text-align:center;
-    width: 98%;
+.textp {
+    text-align: justify;
 }
 
 /* Animation */

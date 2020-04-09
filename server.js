@@ -1,20 +1,26 @@
 const corsConfig = require('./src/corsConfiguration'),
       ctrl       = require('./src/analyticsController'),
+      oADoc      = require('./src/openApiDocumentation'),
       dotenv     = require('dotenv'),
       express    = require('express'),
       mongoose   = require('mongoose'),
       morgan     = require('morgan'),
       path       = require('path'),
+      swaggerUi  = require('swagger-ui-express'),
       app        = express();
 
 dotenv.config();
 
 mongoose.connect(process.env.MONGO_URI);
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, '/public/')));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(oADoc));
+app.use('/public/css', express.static(path.join(__dirname, '/public/css')));
+app.use('/public/img', express.static(path.join(__dirname, '/public/img')));
+app.use('/public/js', express.static(path.join(__dirname, '/public/js')));
+app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('combined'));
+app.use(express.json());
 
 // Endpoints section
 // Open endpoints
