@@ -155,6 +155,16 @@ p {
     text-align: justify;
 }
 
+.gh-icon {
+  width: 60px;
+  height: 60px;
+}
+
+.email-icon {
+    width: 52px;
+    height: 52px;
+  }
+
 /* Animation */
 .cb-slideshow,
 .cb-slideshow:after {
