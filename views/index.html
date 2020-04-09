@@ -74,13 +74,8 @@
           </div>
 
           <div class="tm-social-icons-container">
-            <a href="https://github.com/Asta1986" target="_blank" rel="noreferrer noopener" class="tm-social-link">
-              <img class="gh-icon" src="https://drive.google.com/uc?export=view&id=1-2f91KVxogS_Kvhd2kyZkojc1a-92Ye8" alt="GitHub Logo" title="GitHub Profile">
-            </a>
-            <a href="mailto:psljp@protonmail.com" class="tm-social-link">
-              <img class="email-icon" src="https://drive.google.com/uc?export=view&id=1c-cPqpmdzaEBznzalTk7m2DC8TU6bTyN" alt="Email Icon" title="Send Email">
-            </a>
-            <p id="copyrightP" />
+            <p id="copyrightP"/>
+            <div class="tm1"></div>
           </div>
         </div>
       </div>
@@ -89,8 +84,9 @@
 
   <!-- Set Copyright text in the Footer and API Docs link target. -->
   <script>
-    document.getElementById("copyrightP").innerHTML = "Copyright &copy; Asta86 - " + (new Date()).getFullYear();
+    document.getElementById("copyrightP").innerHTML = "Copyright &copy; <a href='mailto:psljp@protonmail.com'>Asta86</a> - " + (new Date()).getFullYear();
     document.getElementById("apidoca").setAttribute("href", window.location.href.match(/https?:\/\/[^\/]+/)[0] + "/api/docs");
+    document.getElementsByClassName("tm1")[0].innerHTML = "<img src='https://drive.google.com/uc?export=view&id=1-2f91KVxogS_Kvhd2kyZkojc1a-92Ye8' style='width:60px;height:60px;'>";
   </script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script type="text/javascript" src="../public/js/particlesapp.js"></script>
