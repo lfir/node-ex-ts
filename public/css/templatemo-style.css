@@ -236,27 +236,20 @@ p {
   }
 }
 
-@media screen and (max-width: 1140px) {
-  .cb-slideshow li div h3 {
-    font-size: 140px;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .cb-slideshow li div h3 {
-    font-size: 80px;
-  }
+@media screen and (max-height: 880px) {
   .tm-content {
-    margin-top: 80px;
+    margin-top: 300px;
   }
 }
 
-@media screen and (max-width: 576px) {
-  .cb-slideshow li div h3 {
-    font-size: 80px;
+@media screen and (max-width: 1000px) {
+  h1,
+  p,
+  a {
+    font-size: 15px;
   }
 
-  .tm-btn-subscribe {
-    margin-top: 20px;
+  #ghbtn {
+    width: 185px;
   }
 }
