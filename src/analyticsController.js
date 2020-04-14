@@ -27,8 +27,7 @@ exports.normalizePath = (path) => {
   return norm.toLowerCase();
 }
 
-exports.storePageView = async (host, path, accLangs, ip) => {
-  try {
+exports.storePageView = (host, path, accLangs, ip) => {
     const geo = geoip.lookup(ip);
     console.log('ip:', ip);
     console.log('geo:', geo);
@@ -39,11 +38,14 @@ exports.storePageView = async (host, path, accLangs, ip) => {
     if (geo) {
       newPageViewInfo.country = geo.country.toLowerCase();
     }
-    const newPageView = await (new PageView(newPageViewInfo)).save();
+    const newPageView = (new PageView(newPageViewInfo)).save();
     return newPageView; 
-  } catch (err) {
-    throw err;
-  }
+}
+
+exports.searchQueryError = () => {
+  let err = new Error('Invalid search query.');
+  err.statusCode = 400; 
+  return err;
 }
 
 const noOptions      = '',
@@ -83,31 +85,33 @@ exports.searchBetweenDates = (queryParams) => {
   return PageView.find({ date: { '$gte': from, '$lte': to } });
 }
 
-exports.retrievePageViews = async (queryParams) => {
-  try {
+exports.retrievePageViews = (queryParams) => {
     let retrievedPageViews;
     switch(this.getChosenOptions(queryParams)) {
-      case noOptions:
-        retrievedPageViews = await PageView.find();
+    case noOptions:
+        retrievedPageViews = PageView.find();
         break;
-      case fromTo:
-        retrievedPageViews = await this.searchBetweenDates(queryParams);
+    case fromTo:
+        retrievedPageViews = this.searchBetweenDates(queryParams);
         break;
-      case limit:
-        retrievedPageViews = await PageView.find()
-                                     .limit(Number(queryParams.limit));
+    case limit:
+        retrievedPageViews = PageView.find().limit(Number(queryParams.limit));
         break;
-      case fromToAndLimit:
-        retrievedPageViews = await this.searchBetweenDates(queryParams)
-                                     .limit(Number(queryParams.limit));
+    case fromToAndLimit:
+        retrievedPageViews = this.searchBetweenDates(queryParams)
+                                    .limit(Number(queryParams.limit));
         break;
-      default:
-        let err = new Error('Invalid search query.');
-        err.statusCode = 400; 
-        throw err;
+    default:
+        throw this.searchQueryError();
     }
     return retrievedPageViews;
-  } catch (err) {
-    throw err;
-  }
+}
+
+exports.retrievePageView = (queryParams) => {
+    if (!queryParams.id || (Object.keys(queryParams).length !== 1)) {
+        throw this.searchQueryError();
+    }
+    const id = queryParams.id;
+    const pageview = PageView.findById(id);
+    return pageview;
 }

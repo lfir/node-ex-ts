@@ -65,6 +65,16 @@ app.get('/api/pageviews', async (req, res, next) => {
     next(err);
   }
 });
+
+app.get('/api/pageview', async (req, res, next) => {
+  try {
+    console.log('req query string:', req.query);
+    const pageview = await ctrl.retrievePageView(req.query);
+    res.json(pageview);
+  } catch (err) {
+    next(err);
+  }
+});
 //
 
 const listener = app.listen(process.env.PORT || 8080, () => {
