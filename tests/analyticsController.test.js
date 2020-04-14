@@ -56,6 +56,22 @@ test('getChosenOptions for query string with "from" & "to" parameters returns "f
 });
 
 test('getChosenOptions for query string with "from", "to" & "limit" parameters returns "fromToAndLimit"', () => {
-  const qs = { limit: 5,pageSize: 20, from: '2010-01-01', CSRF_TOKEN: 'RPYH', to: '2010-12-11' };
+  const qs = { limit: 5, pageSize: 20, from: '2010-01-01', CSRF_TOKEN: 'RPYH', to: '2010-12-11' };
   expect(ctrl.getChosenOptions(qs)).toMatch('fromToAndLimit');
+});
+
+test('validateIdSearchQuery does not throw Error if only id parameter exists', () => {
+  const queryParameters = { id: 'qwerty' };
+  expect(ctrl.validateIdSearchQuery(queryParameters)).toBeUndefined();
+});
+
+test('validateIdSearchQuery throws Error with correct message if no id parameter exists', () => {
+  const queryParameters = { tst: 123 };
+  expect(() => ctrl.validateIdSearchQuery(queryParameters)).toThrow(Error);
+  expect(() => ctrl.validateIdSearchQuery(queryParameters)).toThrow('Invalid search query.');
+});
+
+test('validateIdSearchQuery throws Error if extra parameter exists', () => {
+  const queryParameters = { tst: 123, id: 'qwerty' };
+  expect(() => ctrl.validateIdSearchQuery(queryParameters)).toThrow(Error);
 });

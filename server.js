@@ -1,13 +1,13 @@
 const corsConfig = require('./src/corsConfiguration'),
-      ctrl       = require('./src/analyticsController'),
-      oADoc      = require('./src/openApiDocumentation'),
-      dotenv     = require('dotenv'),
-      express    = require('express'),
-      mongoose   = require('mongoose'),
-      morgan     = require('morgan'),
-      path       = require('path'),
-      swaggerUi  = require('swagger-ui-express'),
-      app        = express();
+  ctrl = require('./src/analyticsController'),
+  oADoc = require('./src/openApiDocumentation'),
+  dotenv = require('dotenv'),
+  express = require('express'),
+  mongoose = require('mongoose'),
+  morgan = require('morgan'),
+  path = require('path'),
+  swaggerUi = require('swagger-ui-express'),
+  app = express();
 
 dotenv.config();
 
@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '/views/index.html'));
 });
 
-app.get('/api/status', function(req, res) {
+app.get('/api/status', function (req, res) {
   let status = { nodejs: 'ok', mongodb: 'nok' };
   if (mongoose.connection.readyState === 1) {
     status.mongodb = status.nodejs;
@@ -45,12 +45,12 @@ app.post('/api/newpageview', async (req, res, next) => {
   try {
     console.log('req body:', req.body);
     const host = req.body.host,
-          path = req.body.path,
-          acl  = req.headers['accept-language'],
-          ip   = req.body.ip,
-          event = await ctrl.storePageView(host, path, acl, ip);
-          console.log('stored event:', event);
-          res.sendStatus(200);
+      path = req.body.path,
+      acl = req.headers['accept-language'],
+      ip = req.body.ip,
+      newPageView = await ctrl.storePageView(host, path, acl, ip);
+    console.log('stored event:', newPageView);
+    res.json(newPageView);
   } catch (err) {
     next(err);
   }
@@ -71,6 +71,28 @@ app.get('/api/pageview', async (req, res, next) => {
     console.log('req query string:', req.query);
     const pageview = await ctrl.retrievePageView(req.query);
     res.json(pageview);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/api/pageview', async (req, res, next) => {
+  try {
+    console.log('req query string:', req.query);
+    console.log('req body:', req.body);
+    const updatedPageview = await ctrl.updatePageView(req.query, req.body);
+    console.log('stored event:', updatedPageview);
+    res.json(updatedPageview);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete('/api/pageview', async (req, res, next) => {
+  try {
+    console.log('req query string:', req.query);
+    const removedPageView = await ctrl.deletePageView(req.query);
+    res.json(removedPageView);
   } catch (err) {
     next(err);
   }
