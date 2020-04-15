@@ -126,24 +126,29 @@ exports.retrievePageViews = async (queryParams) => {
   return retrievedPageViews;
 }
 
-exports.retrievePageView = async (queryParams) => {
-  this.validateIdSearchQuery(queryParams);
-  const foundPageView = await PageView.findById(queryParams.id);
-  this.validateRetrievedRecords(foundPageView);
-  return foundPageView;
-}
-
-exports.updatePageView = async (queryParams, newPageView) => {
+exports.retrieveOrUpdateOrDeletePageView = async (queryParams, newPageView, operation) => {
   this.validateIdSearchQuery(queryParams);
   const id = queryParams.id;
-  const updatedPageView = await PageView.findByIdAndUpdate(id, newPageView, { new: true });
-  this.validateRetrievedRecords(updatedPageView);
-  return updatedPageView;
+  let resultPageView;
+  if (operation === 'get') {
+    resultPageView = await PageView.findById(id);
+  } else if (operation === 'upd') {
+    resultPageView = await PageView.findByIdAndUpdate(id, newPageView, { new: true });
+  } else if (operation === 'del') {
+    resultPageView = await PageView.findByIdAndRemove(id);
+  }
+  this.validateRetrievedRecords(resultPageView);
+  return resultPageView;
 }
 
-exports.deletePageView = async (queryParams) => {
-  this.validateIdSearchQuery(queryParams);
-  const erasedPageView = await PageView.findByIdAndRemove(queryParams.id);
-  this.validateRetrievedRecords(erasedPageView);
-  return erasedPageView;
+exports.retrievePageView = (queryParams) => {
+  return this.retrieveOrUpdateOrDeletePageView(queryParams, null, 'get');
+}
+
+exports.updatePageView = (queryParams, newPageView) => {
+  return this.retrieveOrUpdateOrDeletePageView(queryParams, newPageView, 'upd');
+}
+
+exports.deletePageView = (queryParams) => {
+  return this.retrieveOrUpdateOrDeletePageView(queryParams, null, 'del');
 }
