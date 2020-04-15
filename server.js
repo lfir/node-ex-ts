@@ -22,8 +22,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(morgan('combined'));
 app.use(express.json());
 
-// Endpoints section
-// Open endpoints
+// Endpoints section.
+// Open endpoints.
 app.use(corsConfig.allowRequest);
 
 app.get('/', (req, res) => {
@@ -38,7 +38,7 @@ app.get('/api/status', function (req, res) {
   res.json(status);
 });
 
-// Restricted endpoints
+// CRUD Operations. CORS-restricted endpoints.
 app.use(corsConfig.allowOrBlockRequest);
 
 app.post('/api/newpageview', async (req, res, next) => {
