@@ -3,7 +3,7 @@ const openApiDocumentation = {
   info: {
     version: '0.0.1',
     title: 'API Lab',
-    description: 'Node.js API template project',
+    description: 'Node.js REST API template project',
     termsOfService: '',
     contact: {
       name: 'Asta86',
@@ -40,7 +40,7 @@ const openApiDocumentation = {
         parameters: [],
         responses: {
           '200': {
-            description: 'Status report obtained.',
+            description: 'Status report object generated and JSON response sent.',
             content: {
               'application/json': {
                 schema: {
@@ -55,7 +55,7 @@ const openApiDocumentation = {
     '/api/pageviews': {
       get: {
         tags: ['CRUD operations'],
-        description: 'Get Page Views. If no filters are provided all records are retrieved.',
+        description: 'Get one or more Page Views at once. If no filters are provided all records in the database are retrieved.',
         operationId: 'getPageViews',
         parameters: [
           {
@@ -100,17 +100,17 @@ const openApiDocumentation = {
         ],
         responses: {
           '200': {
-            description: 'Page Views were obtained.',
+            description: 'Records were successfully retrieved from the database.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/PageView',
+                  $ref: '#/components/schemas/PageViewFinal',
                 },
               },
             },
           },
           '400': {
-            description: 'Missing or extraneous parameters.',
+            description: 'Missing or extraneous parameters in the query string.',
             content: {
               'application/json': {
                 schema: {
@@ -141,7 +141,7 @@ const openApiDocumentation = {
     '/api/pageview': {
       get: {
         tags: ['CRUD operations'],
-        description: 'Get a specific Page View record.',
+        description: 'Get a specific Page View record from the database.',
         operationId: 'getPageView',
         parameters: [
           {
@@ -170,13 +170,13 @@ const openApiDocumentation = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/PageView',
+                  $ref: '#/components/schemas/PageViewFinal',
                 },
               },
             },
           },
           '400': {
-            description: 'Missing id parameter or extraneous parameters.',
+            description: 'Missing id parameter or extraneous parameters in the query string.',
             content: {
               'application/json': {
                 schema: {
@@ -205,8 +205,8 @@ const openApiDocumentation = {
       },
       put: {
         tags: ['CRUD operations'],
-        description: 'Update specific Page View record.',
-        operationId: 'updPageView',
+        description: 'Update a specific Page View record. Only fields with new values need to be provided.',
+        operationId: 'PageViewFinal',
         parameters: [
           {
             name: 'Origin',
@@ -232,7 +232,7 @@ const openApiDocumentation = {
           content: {
             'application/json': {
               schema: {
-                $ref: '#/components/schemas/UpdPageView',
+                $ref: '#/components/schemas/PageViewFinal',
               },
             },
           },
@@ -244,13 +244,13 @@ const openApiDocumentation = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/PageView',
+                  $ref: '#/components/schemas/PageViewFinal',
                 },
               },
             },
           },
           '400': {
-            description: 'Missing id parameter or extraneous parameters.',
+            description: 'Missing id parameter or extraneous parameters in the query string.',
             content: {
               'application/json': {
                 schema: {
@@ -304,17 +304,17 @@ const openApiDocumentation = {
         ],
         responses: {
           '200': {
-            description: 'Page View found and removed.',
+            description: 'Record found and removed.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/PageView',
+                  $ref: '#/components/schemas/PageViewFinal',
                 },
               },
             },
           },
           '400': {
-            description: 'Missing id parameter or extraneous parameters.',
+            description: 'Missing id parameter or extraneous parameters in the query string.',
             content: {
               'application/json': {
                 schema: {
@@ -345,7 +345,7 @@ const openApiDocumentation = {
     '/api/newpageview': {
       post: {
         tags: ['CRUD operations'],
-        description: 'Create and store a new Page View event.',
+        description: 'Create a new Page View event and store it in the database.',
         operationId: 'createPageView',
         parameters: [
           {
@@ -380,9 +380,16 @@ const openApiDocumentation = {
         responses: {
           '200': {
             description: 'New Page View created.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/PageViewFinal',
+                },
+              },
+            }
           },
           '500': {
-            description: 'Missing required parameters.',
+            description: 'Required parameters missing in the request body.',
             content: {
               'application/json': {
                 schema: {
@@ -472,7 +479,7 @@ const openApiDocumentation = {
           }
         }
       },
-      UpdPageView: {
+      PageViewFinal: {
         type: 'object',
         properties: {
           host: {
