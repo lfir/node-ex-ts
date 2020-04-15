@@ -117,13 +117,230 @@ const openApiDocumentation = {
                   $ref: '#/components/schemas/Error',
                 },
                 example: {
-                  message: 'Invalid search query'
+                  message: 'Invalid search query.'
                 },
               },
             },
           },
+          '404': {
+            description: 'No results found.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+                example: {
+                  message: 'No records were found in the database matching the criteria provided.'
+                },
+              },
+            },
+          }
         },
       },
+    },
+    '/api/pageview': {
+      get: {
+        tags: ['CRUD operations'],
+        description: 'Get a specific Page View record.',
+        operationId: 'getPageView',
+        parameters: [
+          {
+            name: 'Origin',
+            in: 'header',
+            schema: {
+              $ref: '#/components/schemas/originheader'
+            },
+            required: true,
+            description: 'Indicates where the request originates from.'
+          },
+          {
+            name: 'id',
+            in: 'query',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'MongoDB ObjectID of the record.',
+            example: '5e891bbdf552340004a8d56f'
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Page View found.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/PageView',
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Missing id parameter or extraneous parameters.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+                example: {
+                  message: 'Invalid search query.'
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Non existent ObjectID.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+                example: {
+                  message: 'No records were found in the database matching the criteria provided.'
+                },
+              },
+            },
+          }
+        },
+      },
+      put: {
+        tags: ['CRUD operations'],
+        description: 'Update specific Page View record.',
+        operationId: 'updPageView',
+        parameters: [
+          {
+            name: 'Origin',
+            in: 'header',
+            schema: {
+              $ref: '#/components/schemas/originheader'
+            },
+            required: true,
+            description: 'Indicates where the request originates from.'
+          },
+          {
+            name: 'id',
+            in: 'query',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'MongoDB ObjectID of the record.',
+            example: '5e891bbdf552340004a8d56f'
+          }
+        ],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/UpdPageView',
+              },
+            },
+          },
+          required: true
+        },
+        responses: {
+          '200': {
+            description: 'Page View found and updated.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/PageView',
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Missing id parameter or extraneous parameters.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+                example: {
+                  message: 'Invalid search query.'
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Non existent ObjectID.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+                example: {
+                  message: 'No records were found in the database matching the criteria provided.'
+                },
+              },
+            },
+          }
+        },
+      },
+      delete: {
+        tags: ['CRUD operations'],
+        description: 'Delete a specific Page View record from the database.',
+        operationId: 'delPageView',
+        parameters: [
+          {
+            name: 'Origin',
+            in: 'header',
+            schema: {
+              $ref: '#/components/schemas/originheader'
+            },
+            required: true,
+            description: 'Indicates where the request originates from.'
+          },
+          {
+            name: 'id',
+            in: 'query',
+            schema: {
+              type: 'string'
+            },
+            required: true,
+            description: 'MongoDB ObjectID of the record.',
+            example: '5e891bbdf552340004a8d56f'
+          }
+        ],
+        responses: {
+          '200': {
+            description: 'Page View found and removed.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/PageView',
+                },
+              },
+            },
+          },
+          '400': {
+            description: 'Missing id parameter or extraneous parameters.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+                example: {
+                  message: 'Invalid search query.'
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Non existent ObjectID.',
+            content: {
+              'application/json': {
+                schema: {
+                  $ref: '#/components/schemas/Error',
+                },
+                example: {
+                  message: 'No records were found in the database matching the criteria provided.'
+                },
+              },
+            },
+          }
+        },
+      }
     },
     '/api/newpageview': {
       post: {
@@ -211,7 +428,7 @@ const openApiDocumentation = {
       },
       aclheader: {
         type: 'string',
-        description: 'Indicates where a request originates from.',
+        description: 'Accepted languages request header.',
         example: 'fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5'
       },
       host: {
@@ -231,6 +448,16 @@ const openApiDocumentation = {
         description: 'IP address of the origin host of the Request.',
         example: '127.0.0.1'
       },
+      country: {
+        type: 'string',
+        description: '2-letter country code of the origin IP address.',
+        example: 'de'
+      },
+      language: {
+        type: 'string',
+        description: '2-letter language code.',
+        example: 'fr'
+      },
       PageView: {
         type: 'object',
         properties: {
@@ -242,6 +469,23 @@ const openApiDocumentation = {
           },
           ip: {
             $ref: '#/components/schemas/ip',
+          }
+        }
+      },
+      UpdPageView: {
+        type: 'object',
+        properties: {
+          host: {
+            $ref: '#/components/schemas/host',
+          },
+          path: {
+            $ref: '#/components/schemas/path',
+          },
+          language: {
+            $ref: '#/components/schemas/language',
+          },
+          country: {
+            $ref: '#/components/schemas/country',
           }
         }
       },
