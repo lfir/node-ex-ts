@@ -48,11 +48,23 @@ exports.searchQueryError = () => {
   return err;
 }
 
+exports.pageViewNotFoundError = () => {
+  let err = new Error('No records were found in the database matching the criteria provided.');
+  err.statusCode = 404;
+  return err;
+}
+
 exports.validateIdSearchQuery = (queryParams) => {
   if (!queryParams.id || (Object.keys(queryParams).length !== 1)) {
     throw this.searchQueryError();
   }
 }
+
+exports.validateRetrievedRecords = (pageViews) => {
+  if (!pageViews || (Array.isArray(pageViews) && !pageViews.length)) {
+    throw this.pageViewNotFoundError();
+  }
+};
 
 const noOptions = '',
   fromTo = 'fromTo',
@@ -91,40 +103,47 @@ exports.searchBetweenDates = (queryParams) => {
   return PageView.find({ date: { '$gte': from, '$lte': to } });
 }
 
-exports.retrievePageViews = (queryParams) => {
+exports.retrievePageViews = async (queryParams) => {
   let retrievedPageViews;
   switch (this.getChosenOptions(queryParams)) {
     case noOptions:
-      retrievedPageViews = PageView.find();
+      retrievedPageViews = await PageView.find();
       break;
     case fromTo:
-      retrievedPageViews = this.searchBetweenDates(queryParams);
+      retrievedPageViews = await this.searchBetweenDates(queryParams);
       break;
     case limit:
-      retrievedPageViews = PageView.find().limit(Number(queryParams.limit));
+      retrievedPageViews = await PageView.find().limit(Number(queryParams.limit));
       break;
     case fromToAndLimit:
-      retrievedPageViews = this.searchBetweenDates(queryParams)
+      retrievedPageViews = await this.searchBetweenDates(queryParams)
         .limit(Number(queryParams.limit));
       break;
     default:
       throw this.searchQueryError();
   }
+  this.validateRetrievedRecords(retrievedPageViews);
   return retrievedPageViews;
 }
 
-exports.retrievePageView = (queryParams) => {
+exports.retrievePageView = async (queryParams) => {
   this.validateIdSearchQuery(queryParams);
-  return PageView.findById(queryParams.id);
+  const foundPageView = await PageView.findById(queryParams.id);
+  this.validateRetrievedRecords(foundPageView);
+  return foundPageView;
 }
 
-exports.updatePageView = (queryParams, newPageView) => {
+exports.updatePageView = async (queryParams, newPageView) => {
   this.validateIdSearchQuery(queryParams);
   const id = queryParams.id;
-  return PageView.findByIdAndUpdate(id, newPageView, { new: true });
+  const updatedPageView = await PageView.findByIdAndUpdate(id, newPageView, { new: true });
+  this.validateRetrievedRecords(updatedPageView);
+  return updatedPageView;
 }
 
-exports.deletePageView = (queryParams) => {
+exports.deletePageView = async (queryParams) => {
   this.validateIdSearchQuery(queryParams);
-  return PageView.findByIdAndRemove(queryParams.id);
+  const erasedPageView = await PageView.findByIdAndRemove(queryParams.id);
+  this.validateRetrievedRecords(erasedPageView);
+  return erasedPageView;
 }
