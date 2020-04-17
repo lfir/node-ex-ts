@@ -22,7 +22,7 @@ exports.normalizeLanguage = (accLangs) => {
 }
 
 exports.normalizePath = (path) => {
-  let norm = path.replace(/\.html$/, '');
+  let norm = path.replace(/\.html$|\/$/, '');
   norm = norm.replace(/^\/index$/, '/');
   return norm.toLowerCase();
 }
