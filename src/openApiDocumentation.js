@@ -1,27 +1,29 @@
+const pkgData = require('../package.json');
+
 const openApiDocumentation = {
   openapi: '3.0.1',
   info: {
-    version: '0.0.1',
-    title: 'API Lab',
-    description: 'Node.js REST API template project',
+    version: pkgData.version,
+    title: pkgData.name,
+    description: pkgData.description,
     termsOfService: '',
     contact: {
-      name: 'Asta86',
-      email: 'psljp@protonmail.com',
-      url: 'https://asta86.gitlab.io',
+      name: pkgData.author.replace(/ .+/, ''),
+      email: pkgData.author.split(' ')[1].replace(/<|>/g, ''),
+      url: pkgData.author.split(' ')[2].replace(/\(|\)/g, ''),
     },
     license: {
-      name: 'Apache 2.0',
-      url: 'https://www.apache.org/licenses/LICENSE-2.0.html',
+      name: pkgData.license,
+      url: 'https://spdx.org/licenses/' + pkgData.license + '.html#licenseText',
     },
   },
   servers: [
     {
-      url: 'http://localhost:8080/',
+      url: 'http://localhost:8080',
       description: 'Local server',
     },
     {
-      url: 'https://l086.herokuapp.com/',
+      url: pkgData.homepage,
       description: 'Development server',
     },
   ],
