@@ -4,7 +4,7 @@ const openApiDocumentation = {
   openapi: '3.0.1',
   info: {
     version: pkgData.version,
-    title: pkgData.name,
+    title: pkgData.name.toUpperCase(),
     description: pkgData.description,
     termsOfService: '',
     contact: {
