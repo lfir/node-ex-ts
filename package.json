@@ -1,5 +1,5 @@
 {
-  "name": "API Lab",
+  "name": "API-Lab",
   "version": "0.0.1",
   "description": "Node.js sample app suitable for cloud containers",
   "main": "server.js",
