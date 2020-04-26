@@ -1,12 +1,13 @@
+import dotenv from 'dotenv';
+import express from 'express';
+import mongoose from 'mongoose';
+import morgan from 'morgan';
+import path from 'path';
+import * as swaggerUi from 'swagger-ui-express';
+
 const corsConfig = require('./src/corsConfiguration'),
   ctrl = require('./src/analyticsController'),
   oADoc = require('./src/openApiDocumentation'),
-  dotenv = require('dotenv'),
-  express = require('express'),
-  mongoose = require('mongoose'),
-  morgan = require('morgan'),
-  path = require('path'),
-  swaggerUi = require('swagger-ui-express'),
   app = express();
 
 dotenv.config();
@@ -99,9 +100,9 @@ app.delete('/api/pageview', async (req, res, next) => {
 });
 //
 
-const listener = app.listen(process.env.PORT || 8080, () => {
-  console.log('Node.js listening on port ' + listener.address().port);
+app.set('port', process.env.PORT || 8080);
+const server = app.listen(app.get('port'), () => {
+  console.log('Node.js listening on port ' + app.get('port'));
 });
 
-exports.app = app;
-exports.mongoose = mongoose;
+export default server;
