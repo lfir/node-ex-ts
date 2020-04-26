@@ -1,6 +1,7 @@
 const geoip = require('geoip-lite'),
-  mongoose = require('mongoose'),
-  Schema = mongoose.Schema;
+  mng =  require('mongoose'),
+  server = require('../server'),
+  Schema = mng.Schema;
 
 const schema = new Schema({
   host: { type: String, required: true },
@@ -10,7 +11,7 @@ const schema = new Schema({
   date: { type: Date, default: Date.now }
 });
 
-const PageView = mongoose.model('PageView', schema);
+const PageView = mng.model('PageView', schema);
 
 exports.normalizeLanguage = (accLangs) => {
   let endCharPos = accLangs.length;
@@ -31,7 +32,7 @@ exports.storePageView = (host, path, accLangs, ip) => {
   const geo = geoip.lookup(ip);
   console.log('ip:', ip);
   console.log('geo:', geo);
-  const newPageViewInfo = { host: host, path: this.normalizePath(path) };
+  const newPageViewInfo = { host: host, path: this.normalizePath(path), language: undefined, country: undefined };
   if (accLangs) {
     newPageViewInfo.language = this.normalizeLanguage(accLangs);
   }
@@ -44,13 +45,13 @@ exports.storePageView = (host, path, accLangs, ip) => {
 
 exports.searchQueryError = () => {
   let err = new Error('Invalid search query.');
-  err.statusCode = 400;
+  //err.statusCode = 400;
   return err;
 }
 
 exports.pageViewNotFoundError = () => {
   let err = new Error('No records were found in the database matching the criteria provided.');
-  err.statusCode = 404;
+  //err.statusCode = 404;
   return err;
 }
 

@@ -22,10 +22,9 @@
     "npm": "*"
   },
   "scripts": {
-    "start": "npm run build-ts && npm run serve",
+    "start": "npm run build-ts && node dist/server.js",
     "test": "jest",
-    "build-ts": "tsc",
-    "serve": "node dist/server.js"
+    "build-ts": "tsc"
   },
   "repository": {
     "type": "git",

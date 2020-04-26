@@ -19,7 +19,7 @@ exports.allowOrBlockRequest = (req, res, next) => {
     next();
   } else {
     let err = new Error('Access denied by CORS policy.');
-    err.statusCode = 403;
+    //err.statusCode = 403;
     next(err);
   }
 }

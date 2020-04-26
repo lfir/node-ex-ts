@@ -30,7 +30,7 @@ const openApiDocumentation = {
   tags: [
     {
       name: 'CRUD operations',
-      name: 'Status report'
+      //name: 'Status report'
     },
   ],
   paths: {
