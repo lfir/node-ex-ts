@@ -1,7 +1,7 @@
-const geoip = require('geoip-lite'),
-  mng =  require('mongoose'),
-  server = require('../server'),
-  Schema = mng.Schema;
+import mongoose from 'mongoose';
+import geoip from 'geoip-lite';
+
+const Schema = mongoose.Schema;
 
 const schema = new Schema({
   host: { type: String, required: true },
@@ -11,7 +11,7 @@ const schema = new Schema({
   date: { type: Date, default: Date.now }
 });
 
-const PageView = mng.model('PageView', schema);
+const PageView = mongoose.model('PageView', schema);
 
 exports.normalizeLanguage = (accLangs) => {
   let endCharPos = accLangs.length;
