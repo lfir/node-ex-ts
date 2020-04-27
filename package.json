@@ -30,7 +30,8 @@
     "start": "npm run build-ts && npm run serve",
     "test": "jest",
     "build-ts": "tsc",
-    "serve": "node dist/server.js"
+    "serve": "node dist/server.js",
+    "cp-static-dirs": "cp -r ./public ./views ./dist"
   },
   "repository": {
     "type": "git",
