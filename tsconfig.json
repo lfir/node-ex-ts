@@ -9,6 +9,5 @@
     "outDir": "dist",
     "baseUrl": "."
   },
-  "files": ["server.ts"],
   "include": ["src/**/*"]
 }

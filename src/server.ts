@@ -5,9 +5,9 @@ import morgan from 'morgan';
 import path from 'path';
 import * as swaggerUi from 'swagger-ui-express';
 
-const corsConfig = require('./src/corsConfiguration'),
-  ctrl = require('./src/analyticsController'),
-  oADoc = require('./src/openApiDocumentation'),
+const corsConfig = require('./configuration/corsConfiguration'),
+  ctrl = require('./controller/analyticsController'),
+  oADoc = require('./configuration/openApiDocumentation'),
   app = express();
 
 dotenv.config();
