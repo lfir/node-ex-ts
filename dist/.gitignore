@@ -1,0 +1,4 @@
+# Ignore everything in this directory since it is used only during deploy.
+*
+# Except this file.
+!.gitignore
