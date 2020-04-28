@@ -1,4 +1,4 @@
-const ctrl = require('../src/analyticsController');
+const ctrl = require('../src/controller/analyticsController');
 
 test('normalizeLanguage on an empty string is an empty string', () => {
   const lang = '';
