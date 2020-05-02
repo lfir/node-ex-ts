@@ -28,11 +28,12 @@
     "npm": "*"
   },
   "scripts": {
-    "start": "npm run build-ts && npm run serve",
-    "test": "jest",
     "build-ts": "tsc",
+    "clear-dist-dir": "rm -rf dist/[^.]*",
+    "cp-static-dirs": "cp -r ./package.json ./public ./views ./dist",
     "serve": "node dist/server.js",
-    "cp-static-dirs": "cp -r ./package.json ./public ./views ./dist"
+    "start": "npm run build-ts && npm run cp-static-dirs && npm run serve",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
