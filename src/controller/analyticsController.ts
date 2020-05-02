@@ -39,11 +39,19 @@ export default class AnalyticsController {
     return norm.toLowerCase();
   }
 
-  storePageView = (host: string, path: string, accLangs: string, ip: string): Promise<mongoose.Document> => {
-    const geo = geoip.lookup(ip);
-    console.log('ip:', ip);
-    console.log('geo:', geo);
-    const newPageViewInfo = { host: host, path: AnalyticsController.normalizePath(path), language: undefined, country: undefined };
+  storePageView = (
+    host: string, path: string, accLangs: string, ip: string
+  ): Promise<mongoose.Document> => {
+    const geo: geoip.Lookup = geoip.lookup(ip);
+    console.log('Event ip:', ip);
+    console.log('Event geoip object:', geo);
+    const newPageViewInfo = { 
+      host: host,
+      path: AnalyticsController.normalizePath(path),
+      language: undefined,
+      country: undefined
+    };
+
     if (accLangs) {
       newPageViewInfo.language = AnalyticsController.normalizeLanguage(accLangs);
     }
@@ -61,7 +69,9 @@ export default class AnalyticsController {
   }
   
   static pageViewNotFoundError = (): Error => {
-    let err = new Error('No records were found in the database matching the criteria provided.');
+    const msg = 'No records were found in the database matching ' +
+                'the criteria provided.'
+    let err = new Error(msg);
     err['statusCode'] = 404;
     return err;
   }
@@ -72,26 +82,42 @@ export default class AnalyticsController {
     }
   }
   
-  static validateRetrievedRecords = (pageViews): void => {
+  static validateRetrievedRecords = (
+    pageViews: mongoose.Document | mongoose.Document[]
+  ): void => {
     if (!pageViews || (Array.isArray(pageViews) && !pageViews.length)) {
       throw AnalyticsController.pageViewNotFoundError();
     }
   };
 
-  static isOptionFromTo = (queryParams): boolean => {
-    return !queryParams.limit && queryParams.from && queryParams.to;
+  static isOptionFromTo = (
+    queryParams: { limit?: string, from?: string, to?: string }
+  ): boolean => {
+    return (Object.keys(queryParams).includes('from') &&
+      Object.keys(queryParams).includes('to')) &&
+      !Object.keys(queryParams).includes('limit');
   }
 
-  static isOptionLimit = (queryParams): boolean => {
-    return !(queryParams.from || queryParams.to) && queryParams.limit;
+  static isOptionLimit = (
+    queryParams: { limit?: string, from?: string, to?: string }
+  ): boolean => {
+    return !(Object.keys(queryParams).includes('from') ||
+      Object.keys(queryParams).includes('to')) &&
+      Object.keys(queryParams).includes('limit');
   }
 
-  static isOptionFromToAndLimit = (queryParams) => {
-    return queryParams.limit && queryParams.from && queryParams.to;
+  static isOptionFromToAndLimit = (
+    queryParams: { limit?: string, from?: string, to?: string }
+  ): boolean => {
+    return (Object.keys(queryParams).includes('from') &&
+      Object.keys(queryParams).includes('to')) &&
+      Object.keys(queryParams).includes('limit');
   }
 
-  static getChosenOptions = (queryParams) => {
-    let options;
+  static getChosenOptions = (
+    queryParams: { limit?: string, from?: string, to?: string }
+  ): ChosenOptions => {
+    let options: ChosenOptions;
     if (AnalyticsController.isOptionFromTo(queryParams)) {
       options = ChosenOptions.FromTo;
     } else if (AnalyticsController.isOptionLimit(queryParams)) {
@@ -110,7 +136,9 @@ export default class AnalyticsController {
     return this.PageView.find({ date: { '$gte': fromDate, '$lte': toDate } });
   }
   
-  retrievePageViews = async (queryParams: { limit?: string, from?: string, to?: string }) => {
+  retrievePageViews = async (
+    queryParams: { limit?: string, from?: string, to?: string }
+  ) => {
     let retrievedPageViews: mongoose.Document[];
     switch (AnalyticsController.getChosenOptions(queryParams)) {
       case ChosenOptions.NoOptions:
@@ -132,160 +160,33 @@ export default class AnalyticsController {
     AnalyticsController.validateRetrievedRecords(retrievedPageViews);
     return retrievedPageViews;
   }
+
+  retrieveOrUpdateOrDeletePageView = async (
+    queryParams: { id?: string }, newPageView: mongoose.Document, operation: string
+  ) => {
+    AnalyticsController.validateIdSearchQuery(queryParams);
+    const id = queryParams.id;
+    let resultPageView: mongoose.Document;
+    if (operation === 'get') {
+      resultPageView = await this.PageView.findById(id);
+    } else if (operation === 'upd') {
+      resultPageView = await this.PageView.findByIdAndUpdate(id, newPageView, { new: true });
+    } else if (operation === 'del') {
+      resultPageView = await this.PageView.findByIdAndRemove(id);
+    }
+    AnalyticsController.validateRetrievedRecords(resultPageView);
+    return resultPageView;
+  }
   
-}
-
-/*
-const Schema = mongoose.Schema;
-
-const schema = new Schema({
-  host: { type: String, required: true },
-  path: { type: String, required: true },
-  language: { type: String },
-  country: { type: String },
-  date: { type: Date, default: Date.now }
-});
-
-const PageView = mongoose.model('PageView', schema);
-
-exports.normalizeLanguage = (accLangs) => {
-  let endCharPos = accLangs.length;
-  let nonLetterCharPos = accLangs.search(/[^a-z]/);
-  if (nonLetterCharPos > -1) {
-    endCharPos = nonLetterCharPos;
+  retrievePageView = (queryParams: { id?: string }) => {
+    return this.retrieveOrUpdateOrDeletePageView(queryParams, null, 'get');
   }
-  return accLangs.substring(0, endCharPos);
-}
-
-exports.normalizePath = (path) => {
-  let norm = path.replace(/\.html$|\/$/, '');
-  norm = norm.replace(/^\/index$/, '/');
-  return norm.toLowerCase();
-}
-
-exports.storePageView = (host, path, accLangs, ip) => {
-  const geo = geoip.lookup(ip);
-  console.log('ip:', ip);
-  console.log('geo:', geo);
-  const newPageViewInfo = { host: host, path: this.normalizePath(path), language: undefined, country: undefined };
-  if (accLangs) {
-    newPageViewInfo.language = this.normalizeLanguage(accLangs);
+  
+  updatePageView = (queryParams: { id?: string }, newPageView: mongoose.Document) => {
+    return this.retrieveOrUpdateOrDeletePageView(queryParams, newPageView, 'upd');
   }
-  if (geo) {
-    newPageViewInfo.country = geo.country.toLowerCase();
-  }
-  const newPageView = (new PageView(newPageViewInfo)).save();
-  return newPageView;
-}
-
-exports.searchQueryError = () => {
-  let err = new Error('Invalid search query.');
-  //err.statusCode = 400;
-  return err;
-}
-
-exports.pageViewNotFoundError = () => {
-  let err = new Error('No records were found in the database matching the criteria provided.');
-  //err.statusCode = 404;
-  return err;
-}
-
-exports.validateIdSearchQuery = (queryParams) => {
-  if (!queryParams.id || (Object.keys(queryParams).length !== 1)) {
-    throw this.searchQueryError();
+  
+  deletePageView = (queryParams: { id?: string }) => {
+    return this.retrieveOrUpdateOrDeletePageView(queryParams, null, 'del');
   }
 }
-
-exports.validateRetrievedRecords = (pageViews) => {
-  if (!pageViews || (Array.isArray(pageViews) && !pageViews.length)) {
-    throw this.pageViewNotFoundError();
-  }
-};
-
-const noOptions = '',
-  fromTo = 'fromTo',
-  limit = 'limit',
-  fromToAndLimit = 'fromToAndLimit';
-
-exports.isOptionFromTo = (queryParams) => {
-  return !queryParams.limit && queryParams.from && queryParams.to;
-}
-
-exports.isOptionLimit = (queryParams) => {
-  return !(queryParams.from || queryParams.to) && queryParams.limit;
-}
-
-exports.isOptionFromToAndLimit = (queryParams) => {
-  return queryParams.limit && queryParams.from && queryParams.to;
-}
-
-exports.getChosenOptions = (queryParams) => {
-  let options;
-  if (this.isOptionFromTo(queryParams)) {
-    options = fromTo;
-  } else if (this.isOptionLimit(queryParams)) {
-    options = limit;
-  } else if (this.isOptionFromToAndLimit(queryParams)) {
-    options = fromToAndLimit;
-  } else if (Object.keys(queryParams).length === 0) {
-    options = noOptions;
-  }
-  return options;
-}
-
-exports.searchBetweenDates = (queryParams) => {
-  const from = new Date(queryParams.from + 'T00:00:00Z'),
-    to = new Date(queryParams.to + 'T23:59:59Z');
-  return PageView.find({ date: { '$gte': from, '$lte': to } });
-}
-
-exports.retrievePageViews = async (queryParams) => {
-  let retrievedPageViews;
-  switch (this.getChosenOptions(queryParams)) {
-    case noOptions:
-      retrievedPageViews = await PageView.find();
-      break;
-    case fromTo:
-      retrievedPageViews = await this.searchBetweenDates(queryParams);
-      break;
-    case limit:
-      retrievedPageViews = await PageView.find().limit(Number(queryParams.limit));
-      break;
-    case fromToAndLimit:
-      retrievedPageViews = await this.searchBetweenDates(queryParams)
-        .limit(Number(queryParams.limit));
-      break;
-    default:
-      throw this.searchQueryError();
-  }
-  this.validateRetrievedRecords(retrievedPageViews);
-  return retrievedPageViews;
-}
-
-exports.retrieveOrUpdateOrDeletePageView = async (queryParams, newPageView, operation) => {
-  this.validateIdSearchQuery(queryParams);
-  const id = queryParams.id;
-  let resultPageView;
-  if (operation === 'get') {
-    resultPageView = await PageView.findById(id);
-  } else if (operation === 'upd') {
-    resultPageView = await PageView.findByIdAndUpdate(id, newPageView, { new: true });
-  } else if (operation === 'del') {
-    resultPageView = await PageView.findByIdAndRemove(id);
-  }
-  this.validateRetrievedRecords(resultPageView);
-  return resultPageView;
-}
-
-exports.retrievePageView = (queryParams) => {
-  return this.retrieveOrUpdateOrDeletePageView(queryParams, null, 'get');
-}
-
-exports.updatePageView = (queryParams, newPageView) => {
-  return this.retrieveOrUpdateOrDeletePageView(queryParams, newPageView, 'upd');
-}
-
-exports.deletePageView = (queryParams) => {
-  return this.retrieveOrUpdateOrDeletePageView(queryParams, null, 'del');
-}
-*/

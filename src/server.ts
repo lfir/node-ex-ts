@@ -68,7 +68,7 @@ app.get('/api/pageviews', async (req, res, next) => {
     next(err);
   }
 });
-/*
+
 app.get('/api/pageview', async (req, res, next) => {
   try {
     console.log('req query string:', req.query);
@@ -99,7 +99,7 @@ app.delete('/api/pageview', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});*/
+});
 //
 
 app.set('port', process.env.PORT || 8080);

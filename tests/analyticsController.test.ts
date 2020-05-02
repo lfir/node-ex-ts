@@ -57,7 +57,7 @@ test('getChosenOptions for empty query string is NoOptions', () => {
 
 test('getChosenOptions for query string with "limit" parameter returns "Limit"', () => {
   const qs = { pageSize: 20, limit: 5, CSRF_TOKEN: 'RPYH' };
-  expect(AnalyticsController.getChosenOptions(qs)).toBe(ChosenOptions.Limit);
+  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(ChosenOptions.Limit);
 });
 
 test('getChosenOptions for query string with "from" & "to" parameters returns "FromTo"', () => {
@@ -67,7 +67,7 @@ test('getChosenOptions for query string with "from" & "to" parameters returns "F
 
 test('getChosenOptions for query string with "from", "to" & "limit" parameters returns "FromToAndLimit"', () => {
   const qs = { limit: 5, pageSize: 20, from: '2010-01-01', CSRF_TOKEN: 'RPYH', to: '2010-12-11' };
-  expect(AnalyticsController.getChosenOptions(qs)).toBe(ChosenOptions.FromToAndLimit);
+  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(ChosenOptions.FromToAndLimit);
 });
 
 test('validateIdSearchQuery does not throw Error if only id parameter exists', () => {
