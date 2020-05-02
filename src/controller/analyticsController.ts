@@ -56,13 +56,13 @@ export default class AnalyticsController {
 
   static searchQueryError = (): Error => {
     let err = new Error('Invalid search query.');
-    //err.statusCode = 400;
+    err['statusCode'] = 400;
     return err;
   }
   
   static pageViewNotFoundError = (): Error => {
     let err = new Error('No records were found in the database matching the criteria provided.');
-    //err.statusCode = 404;
+    err['statusCode'] = 404;
     return err;
   }
   
@@ -104,10 +104,10 @@ export default class AnalyticsController {
     return options;
   }
 
-  searchBetweenDates = (queryParams) => {
-    const from = new Date(queryParams.from + 'T00:00:00Z'),
-      to = new Date(queryParams.to + 'T23:59:59Z');
-    return this.PageView.find({ date: { '$gte': from, '$lte': to } });
+  searchBetweenDates = (from: string, to: string) => {
+    const fromDate = new Date(from + 'T00:00:00Z'),
+      toDate = new Date(to + 'T23:59:59Z');
+    return this.PageView.find({ date: { '$gte': fromDate, '$lte': toDate } });
   }
   
   retrievePageViews = async (queryParams: { limit?: string, from?: string, to?: string }) => {
@@ -117,13 +117,13 @@ export default class AnalyticsController {
         retrievedPageViews = await this.PageView.find();
         break;
       case ChosenOptions.FromTo:
-        retrievedPageViews = await this.searchBetweenDates(queryParams);
+        retrievedPageViews = await this.searchBetweenDates(queryParams.from, queryParams.to);
         break;
       case ChosenOptions.Limit:
         retrievedPageViews = await this.PageView.find().limit(Number(queryParams.limit));
         break;
       case ChosenOptions.FromToAndLimit:
-        retrievedPageViews = await this.searchBetweenDates(queryParams)
+        retrievedPageViews = await this.searchBetweenDates(queryParams.from, queryParams.to)
           .limit(Number(queryParams.limit));
         break;
       default:
