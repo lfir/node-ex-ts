@@ -4,27 +4,27 @@ const acAllowOrg = 'Access-Control-Allow-Origin',
   acAllowHeaders = 'Access-Control-Allow-Headers',
   allowedHeaders = 'Origin, X-Requested-With, Content-Type, Accept';
 
-function setCommonHeaders(res) {
+function setCommonHeaders(res): void {
   res.setHeader(acAllowMethods, allowedMethods);
   res.setHeader(acAllowHeaders, allowedHeaders);
 }
 
-exports.allowOrBlockRequest = (req, res, next) => {
-  const inCorsWhitelist = process.env.ALLOWED_HOSTS.split(' ').includes(req.headers.origin);
+export const allowOrBlockRequest = (req, res, next): void => {
+  const inCorsWhitelist = process.env.ALLOWED_HOSTS.split(' ').includes(req.headers['origin']);
   const allowAnyOrigin = Boolean(process.env.ALLOW_ANY_ORIGIN);
   if (inCorsWhitelist || allowAnyOrigin) {
-    let origin = inCorsWhitelist ? req.headers.origin : '*';
-    res.setHeader(acAllowOrg, origin);
+    let origin = inCorsWhitelist ? req.headers['origin'] : '*';
+    res['setHeader'](acAllowOrg, origin);
     setCommonHeaders(res);
     next();
   } else {
     let err = new Error('Access denied by CORS policy.');
-    //err.statusCode = 403;
+    err['statusCode'] = 403;
     next(err);
   }
 }
 
-exports.allowRequest = (req, res, next) => {
+export const allowRequest = (_req, res, next): void => {
   res.setHeader(acAllowOrg, '*');
   setCommonHeaders(res);
   next();

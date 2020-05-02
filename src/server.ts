@@ -4,19 +4,18 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import path from 'path';
 import AnalyticsController from './controller/analyticsController';
+import * as corsConfig from './configuration/corsConfiguration';
 import * as swaggerUi from 'swagger-ui-express';
 
 
-const corsConfig = require('./configuration/corsConfiguration'),
-  oADoc = require('./configuration/openApiDocumentation'),
-  app = express(),
+const app = express(),
   ctrl = new AnalyticsController();
 
 dotenv.config();
 
 mongoose.connect(process.env.MONGO_URI);
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(oADoc));
+//app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(oADoc));
 app.use('/public/css', express.static(path.join(__dirname, '/public/css')));
 app.use('/public/img', express.static(path.join(__dirname, '/public/img')));
 app.use('/public/js', express.static(path.join(__dirname, '/public/js')));
@@ -29,11 +28,11 @@ app.use(express.json());
 // Open endpoints.
 app.use(corsConfig.allowRequest);
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, '/views/index.html'));
 });
 
-app.get('/api/status', function (req, res) {
+app.get('/api/status', function (_req, res) {
   let status = { nodejs: 'ok', mongodb: 'nok' };
   if (mongoose.connection.readyState === 1) {
     status.mongodb = status.nodejs;
