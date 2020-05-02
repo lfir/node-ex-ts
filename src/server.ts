@@ -6,6 +6,7 @@ import path from 'path';
 import AnalyticsController from './controller/analyticsController';
 import * as corsConfig from './configuration/corsConfiguration';
 import * as swaggerUi from 'swagger-ui-express';
+import { openApiDocumentation } from './configuration/openApiDocumentation';
 
 
 const app = express(),
@@ -15,7 +16,7 @@ dotenv.config();
 
 mongoose.connect(process.env.MONGO_URI);
 
-//app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(oADoc));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 app.use('/public/css', express.static(path.join(__dirname, '/public/css')));
 app.use('/public/img', express.static(path.join(__dirname, '/public/img')));
 app.use('/public/js', express.static(path.join(__dirname, '/public/js')));

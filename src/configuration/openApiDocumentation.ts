@@ -1,6 +1,6 @@
 const pkgData = require('../package.json');
 
-const openApiDocumentation = {
+export const openApiDocumentation = {
   openapi: '3.0.1',
   info: {
     version: pkgData.version,
@@ -27,12 +27,7 @@ const openApiDocumentation = {
       description: 'Development server',
     },
   ],
-  tags: [
-    {
-      name: 'CRUD operations',
-      //name: 'Status report'
-    },
-  ],
+  tags: ['CRUD operations', 'Status report'],
   paths: {
     '/api/status': {
       get: {
@@ -512,5 +507,3 @@ const openApiDocumentation = {
     }
   }
 };
-
-module.exports = openApiDocumentation;
