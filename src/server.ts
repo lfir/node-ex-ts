@@ -3,12 +3,14 @@ import express from 'express';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import path from 'path';
+import AnalyticsController from './controller/analyticsController';
 import * as swaggerUi from 'swagger-ui-express';
 
+
 const corsConfig = require('./configuration/corsConfiguration'),
-  ctrl = require('./controller/analyticsController'),
   oADoc = require('./configuration/openApiDocumentation'),
-  app = express();
+  app = express(),
+  ctrl = new AnalyticsController();
 
 dotenv.config();
 
@@ -66,7 +68,7 @@ app.get('/api/pageviews', async (req, res, next) => {
     next(err);
   }
 });
-
+/*
 app.get('/api/pageview', async (req, res, next) => {
   try {
     console.log('req query string:', req.query);
@@ -97,7 +99,7 @@ app.delete('/api/pageview', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+});*/
 //
 
 app.set('port', process.env.PORT || 8080);

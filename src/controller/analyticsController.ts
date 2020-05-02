@@ -1,6 +1,141 @@
 import mongoose from 'mongoose';
 import geoip from 'geoip-lite';
 
+
+export enum ChosenOptions {
+  NoOptions,
+  FromTo,
+  Limit,
+  FromToAndLimit
+}
+
+export default class AnalyticsController {
+  schema: mongoose.Schema<any>;
+  PageView: mongoose.Model<mongoose.Document, {}>;
+
+  constructor() {
+    this.schema = new mongoose.Schema({
+      host: { type: String, required: true },
+      path: { type: String, required: true },
+      language: { type: String },
+      country: { type: String },
+      date: { type: Date, default: Date.now }
+    });
+    this.PageView = mongoose.model('PageView', this.schema);
+  }
+
+  static normalizeLanguage = (accLangs: string): string => {
+    let endCharPos = accLangs.length;
+    let nonLetterCharPos = accLangs.search(/[^a-z]/);
+    if (nonLetterCharPos > -1) {
+      endCharPos = nonLetterCharPos;
+    }
+    return accLangs.substring(0, endCharPos);
+  }
+
+  static normalizePath = (path: string): string => {
+    let norm = path.replace(/\.html$|\/$/, '');
+    norm = norm.replace(/^\/index$/, '/');
+    return norm.toLowerCase();
+  }
+
+  storePageView = (host: string, path: string, accLangs: string, ip: string): Promise<mongoose.Document> => {
+    const geo = geoip.lookup(ip);
+    console.log('ip:', ip);
+    console.log('geo:', geo);
+    const newPageViewInfo = { host: host, path: AnalyticsController.normalizePath(path), language: undefined, country: undefined };
+    if (accLangs) {
+      newPageViewInfo.language = AnalyticsController.normalizeLanguage(accLangs);
+    }
+    if (geo) {
+      newPageViewInfo.country = geo.country.toLowerCase();
+    }
+    const newPageView = (new this.PageView(newPageViewInfo)).save();
+    return newPageView;
+  }
+
+  static searchQueryError = (): Error => {
+    let err = new Error('Invalid search query.');
+    //err.statusCode = 400;
+    return err;
+  }
+  
+  static pageViewNotFoundError = (): Error => {
+    let err = new Error('No records were found in the database matching the criteria provided.');
+    //err.statusCode = 404;
+    return err;
+  }
+  
+  static validateIdSearchQuery = (queryParams: { id?: string }): void => {
+    if (!queryParams.id || (Object.keys(queryParams).length !== 1)) {
+      throw AnalyticsController.searchQueryError();
+    }
+  }
+  
+  static validateRetrievedRecords = (pageViews): void => {
+    if (!pageViews || (Array.isArray(pageViews) && !pageViews.length)) {
+      throw AnalyticsController.pageViewNotFoundError();
+    }
+  };
+
+  static isOptionFromTo = (queryParams): boolean => {
+    return !queryParams.limit && queryParams.from && queryParams.to;
+  }
+
+  static isOptionLimit = (queryParams): boolean => {
+    return !(queryParams.from || queryParams.to) && queryParams.limit;
+  }
+
+  static isOptionFromToAndLimit = (queryParams) => {
+    return queryParams.limit && queryParams.from && queryParams.to;
+  }
+
+  static getChosenOptions = (queryParams) => {
+    let options;
+    if (AnalyticsController.isOptionFromTo(queryParams)) {
+      options = ChosenOptions.FromTo;
+    } else if (AnalyticsController.isOptionLimit(queryParams)) {
+      options = ChosenOptions.Limit;
+    } else if (AnalyticsController.isOptionFromToAndLimit(queryParams)) {
+      options = ChosenOptions.FromToAndLimit;
+    } else if (Object.keys(queryParams).length === 0) {
+      options = ChosenOptions.NoOptions;
+    }
+    return options;
+  }
+
+  searchBetweenDates = (queryParams) => {
+    const from = new Date(queryParams.from + 'T00:00:00Z'),
+      to = new Date(queryParams.to + 'T23:59:59Z');
+    return this.PageView.find({ date: { '$gte': from, '$lte': to } });
+  }
+  
+  retrievePageViews = async (queryParams: { limit?: string, from?: string, to?: string }) => {
+    let retrievedPageViews: mongoose.Document[];
+    switch (AnalyticsController.getChosenOptions(queryParams)) {
+      case ChosenOptions.NoOptions:
+        retrievedPageViews = await this.PageView.find();
+        break;
+      case ChosenOptions.FromTo:
+        retrievedPageViews = await this.searchBetweenDates(queryParams);
+        break;
+      case ChosenOptions.Limit:
+        retrievedPageViews = await this.PageView.find().limit(Number(queryParams.limit));
+        break;
+      case ChosenOptions.FromToAndLimit:
+        retrievedPageViews = await this.searchBetweenDates(queryParams)
+          .limit(Number(queryParams.limit));
+        break;
+      default:
+        throw AnalyticsController.searchQueryError();
+    }
+    AnalyticsController.validateRetrievedRecords(retrievedPageViews);
+    return retrievedPageViews;
+  }
+  
+}
+
+/*
 const Schema = mongoose.Schema;
 
 const schema = new Schema({
@@ -153,3 +288,4 @@ exports.updatePageView = (queryParams, newPageView) => {
 exports.deletePageView = (queryParams) => {
   return this.retrieveOrUpdateOrDeletePageView(queryParams, null, 'del');
 }
+*/
