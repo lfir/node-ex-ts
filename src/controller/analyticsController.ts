@@ -138,7 +138,7 @@ export default class AnalyticsController {
   
   retrievePageViews = async (
     queryParams: { limit?: string, from?: string, to?: string }
-  ) => {
+  ): Promise<mongoose.Document[]> => {
     let retrievedPageViews: mongoose.Document[];
     switch (AnalyticsController.getChosenOptions(queryParams)) {
       case ChosenOptions.NoOptions:
@@ -162,8 +162,8 @@ export default class AnalyticsController {
   }
 
   retrieveOrUpdateOrDeletePageView = async (
-    queryParams: { id?: string }, newPageView: mongoose.Document, operation: string
-  ) => {
+    operation: string, queryParams: { id?: string }, newPageView?: mongoose.Document
+  ): Promise<mongoose.Document> => {
     AnalyticsController.validateIdSearchQuery(queryParams);
     const id = queryParams.id;
     let resultPageView: mongoose.Document;
@@ -178,15 +178,17 @@ export default class AnalyticsController {
     return resultPageView;
   }
   
-  retrievePageView = (queryParams: { id?: string }) => {
-    return this.retrieveOrUpdateOrDeletePageView(queryParams, null, 'get');
+  retrievePageView = (queryParams: { id?: string }): Promise<mongoose.Document> => {
+    return this.retrieveOrUpdateOrDeletePageView('get', queryParams);
   }
   
-  updatePageView = (queryParams: { id?: string }, newPageView: mongoose.Document) => {
-    return this.retrieveOrUpdateOrDeletePageView(queryParams, newPageView, 'upd');
+  updatePageView = (
+    queryParams: { id?: string }, newPageView: mongoose.Document
+  ): Promise<mongoose.Document> => {
+    return this.retrieveOrUpdateOrDeletePageView('upd', queryParams, newPageView);
   }
   
-  deletePageView = (queryParams: { id?: string }) => {
-    return this.retrieveOrUpdateOrDeletePageView(queryParams, null, 'del');
+  deletePageView = (queryParams: { id?: string }): Promise<mongoose.Document> => {
+    return this.retrieveOrUpdateOrDeletePageView('del', queryParams);
   }
 }

@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import path from 'path';
@@ -10,7 +10,7 @@ import { openApiDocumentation } from './configuration/openApiDocumentation';
 
 
 const app = express(),
-  ctrl = new AnalyticsController();
+  ctrl: AnalyticsController = new AnalyticsController();
 
 dotenv.config();
 
@@ -29,11 +29,11 @@ app.use(express.json());
 // Open endpoints.
 app.use(corsConfig.allowRequest);
 
-app.get('/', (_req, res) => {
+app.get('/', (_req: Request, res: Response): void => {
   res.sendFile(path.join(__dirname, '/views/index.html'));
 });
 
-app.get('/api/status', function (_req, res) {
+app.get('/api/status', (_req: Request, res: Response): void => {
   let status = { nodejs: 'ok', mongodb: 'nok' };
   if (mongoose.connection.readyState === 1) {
     status.mongodb = status.nodejs;
@@ -44,7 +44,9 @@ app.get('/api/status', function (_req, res) {
 // CRUD Operations. CORS-restricted endpoints.
 app.use(corsConfig.allowOrBlockRequest);
 
-app.post('/api/newpageview', async (req, res, next) => {
+app.post('/api/newpageview', async (
+  req: Request, res: Response, next: NextFunction
+): Promise<void> => {
   try {
     console.log('req body:', req.body);
     const host = req.body.host,
@@ -59,7 +61,9 @@ app.post('/api/newpageview', async (req, res, next) => {
   }
 });
 
-app.get('/api/pageviews', async (req, res, next) => {
+app.get('/api/pageviews', async (
+  req: Request, res: Response, next: NextFunction
+): Promise<void> => {
   try {
     console.log('req query string:', req.query);
     const pageviews = await ctrl.retrievePageViews(req.query);
@@ -69,7 +73,9 @@ app.get('/api/pageviews', async (req, res, next) => {
   }
 });
 
-app.get('/api/pageview', async (req, res, next) => {
+app.get('/api/pageview', async (
+  req: Request, res: Response, next: NextFunction
+): Promise<void> => {
   try {
     console.log('req query string:', req.query);
     const pageview = await ctrl.retrievePageView(req.query);
@@ -79,7 +85,9 @@ app.get('/api/pageview', async (req, res, next) => {
   }
 });
 
-app.put('/api/pageview', async (req, res, next) => {
+app.put('/api/pageview', async (
+  req: Request, res: Response, next: NextFunction
+): Promise<void> => {
   try {
     console.log('req query string:', req.query);
     console.log('req body:', req.body);
@@ -91,7 +99,9 @@ app.put('/api/pageview', async (req, res, next) => {
   }
 });
 
-app.delete('/api/pageview', async (req, res, next) => {
+app.delete('/api/pageview', async (
+  req: Request, res: Response, next: NextFunction
+): Promise<void> => {
   try {
     console.log('req query string:', req.query);
     const removedPageView = await ctrl.deletePageView(req.query);
@@ -103,7 +113,7 @@ app.delete('/api/pageview', async (req, res, next) => {
 //
 
 app.set('port', process.env.PORT || 8080);
-const server = app.listen(app.get('port'), () => {
+const server = app.listen(app.get('port'), (): void => {
   console.log('Node.js listening on port ' + app.get('port'));
 });
 
