@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import geoip from 'geoip-lite';
+import StatusCodeError from '../exception/statusCodeError';
 
 
 export enum ChosenOptions {
@@ -45,11 +46,11 @@ export default class AnalyticsController {
     const geo: geoip.Lookup = geoip.lookup(ip);
     console.log('Event ip:', ip);
     console.log('Event geoip object:', geo);
-    const newPageViewInfo = { 
+    let newPageViewInfo: {
+      host: string, path: string, language?: string, country?: string
+    } = {
       host: host,
       path: AnalyticsController.normalizePath(path),
-      language: undefined,
-      country: undefined
     };
 
     if (accLangs) {
@@ -62,18 +63,14 @@ export default class AnalyticsController {
     return newPageView;
   }
 
-  static searchQueryError = (): Error => {
-    let err = new Error('Invalid search query.');
-    err['statusCode'] = 400;
-    return err;
+  static searchQueryError = (): StatusCodeError => {
+    return new StatusCodeError('Invalid search query.', 400);
   }
   
-  static pageViewNotFoundError = (): Error => {
+  static pageViewNotFoundError = (): StatusCodeError => {
     const msg = 'No records were found in the database matching ' +
                 'the criteria provided.'
-    let err = new Error(msg);
-    err['statusCode'] = 404;
-    return err;
+    return new StatusCodeError(msg, 404);
   }
   
   static validateIdSearchQuery = (queryParams: { id?: string }): void => {

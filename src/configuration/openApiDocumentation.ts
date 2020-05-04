@@ -34,7 +34,6 @@ export const openApiDocumentation = {
         tags: ['Status report'],
         description: 'Get API Lab services status.',
         operationId: 'getStatusReport',
-        parameters: [],
         responses: {
           '200': {
             description: 'Status report object generated and JSON response sent.',

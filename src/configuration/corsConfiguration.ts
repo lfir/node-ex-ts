@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import StatusCodeError from '../exception/statusCodeError';
 
 
 const acAllowOrg = 'Access-Control-Allow-Origin',
@@ -24,9 +25,7 @@ export const allowOrBlockRequest = (
     setCommonHeaders(res);
     next();
   } else {
-    let err = new Error('Access denied by CORS policy.');
-    err['statusCode'] = 403;
-    next(err);
+    next(new StatusCodeError('Access denied by CORS policy.', 403));
   }
 }
 
