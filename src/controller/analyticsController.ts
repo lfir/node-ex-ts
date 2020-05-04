@@ -130,7 +130,9 @@ export default class AnalyticsController {
     return options;
   }
 
-  searchBetweenDates = (from: string, to: string) => {
+  searchBetweenDates = (
+    from: string, to: string
+  ): mongoose.DocumentQuery<mongoose.Document[], mongoose.Document, {}> => {
     const fromDate = new Date(from + 'T00:00:00Z'),
       toDate = new Date(to + 'T23:59:59Z');
     return this.PageView.find({ date: { '$gte': fromDate, '$lte': toDate } });

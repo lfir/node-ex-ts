@@ -8,8 +8,8 @@ const acAllowOrg = 'Access-Control-Allow-Origin',
   allowedHeaders = 'Origin, X-Requested-With, Content-Type, Accept';
 
 function setCommonHeaders(res: Response): void {
-  res['setHeader'](acAllowMethods, allowedMethods);
-  res['setHeader'](acAllowHeaders, allowedHeaders);
+  res.setHeader(acAllowMethods, allowedMethods);
+  res.setHeader(acAllowHeaders, allowedHeaders);
 }
 
 export const allowOrBlockRequest = (
@@ -20,7 +20,7 @@ export const allowOrBlockRequest = (
   const allowAnyOrigin = Boolean(process.env.ALLOW_ANY_ORIGIN);
   if (inCorsWhitelist || allowAnyOrigin) {
     let origin = inCorsWhitelist ? reqOrg : '*';
-    res['setHeader'](acAllowOrg, origin);
+    res.setHeader(acAllowOrg, origin);
     setCommonHeaders(res);
     next();
   } else {
@@ -30,7 +30,9 @@ export const allowOrBlockRequest = (
   }
 }
 
-export const allowRequest = (_req: Request, res: Response, next: NextFunction): void => {
+export const allowRequest = (
+  _req: Request, res: Response, next: NextFunction
+): void => {
   res.setHeader(acAllowOrg, '*');
   setCommonHeaders(res);
   next();
