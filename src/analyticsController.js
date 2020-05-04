@@ -31,7 +31,7 @@ exports.storePageView = (host, path, accLangs, ip) => {
   const geo = geoip.lookup(ip);
   console.log('ip:', ip);
   console.log('geo:', geo);
-  const newPageViewInfo = { host: host, path: this.normalizePath(path) };
+  let newPageViewInfo = { host: host, path: this.normalizePath(path) };
   if (accLangs) {
     newPageViewInfo.language = this.normalizeLanguage(accLangs);
   }
