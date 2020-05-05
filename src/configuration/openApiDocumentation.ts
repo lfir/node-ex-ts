@@ -1,6 +1,6 @@
 const pkgData = require('../package.json');
 
-const openApiDocumentation = {
+export const openApiDocumentation = {
   openapi: '3.0.1',
   info: {
     version: pkgData.version,
@@ -27,19 +27,13 @@ const openApiDocumentation = {
       description: 'Development server',
     },
   ],
-  tags: [
-    {
-      name: 'CRUD operations',
-      name: 'Status report'
-    },
-  ],
+  tags: ['CRUD operations', 'Status report'],
   paths: {
     '/api/status': {
       get: {
         tags: ['Status report'],
         description: 'Get API Lab services status.',
         operationId: 'getStatusReport',
-        parameters: [],
         responses: {
           '200': {
             description: 'Status report object generated and JSON response sent.',
@@ -512,5 +506,3 @@ const openApiDocumentation = {
     }
   }
 };
-
-module.exports = openApiDocumentation;
