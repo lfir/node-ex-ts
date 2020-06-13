@@ -41,7 +41,7 @@ export default class AnalyticsController {
   }
 
   storePageView = (
-    host: string, path: string, accLangs: string, ip: string
+    host: string, path: string, accLangs?: string, ip?: string
   ): Promise<mongoose.Document> => {
     const geo: geoip.Lookup = geoip.lookup(ip);
     console.log('Event ip:', ip);
