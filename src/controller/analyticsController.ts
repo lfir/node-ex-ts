@@ -1,14 +1,9 @@
-import mongoose from 'mongoose';
 import geoip from 'geoip-lite';
+import mongoose from 'mongoose';
 import StatusCodeError from '../exception/statusCodeError';
-
-
-export enum ChosenOptions {
-  NoOptions,
-  FromTo,
-  Limit,
-  FromToAndLimit
-}
+import { ESearchOptions } from './searchOptions.enum';
+import { INewPageView, IUpdPageView } from './pageView.interface';
+import { ISearchOptions } from './searchOptions.interface';
 
 export default class AnalyticsController {
   schema: mongoose.Schema<any>;
@@ -46,9 +41,7 @@ export default class AnalyticsController {
     const geo: geoip.Lookup = geoip.lookup(ip);
     console.log('Event ip:', ip);
     console.log('Event geoip object:', geo);
-    let newPageViewInfo: {
-      host: string, path: string, language?: string, country?: string
-    } = {
+    let newPageViewInfo: INewPageView = {
       host: host,
       path: AnalyticsController.normalizePath(path),
     };
@@ -88,41 +81,40 @@ export default class AnalyticsController {
   };
 
   static isOptionFromTo = (
-    queryParams: { limit?: string, from?: string, to?: string }
+    queryParams: ISearchOptions
   ): boolean => {
-    return (Object.keys(queryParams).includes('from') &&
-      Object.keys(queryParams).includes('to')) &&
-      !Object.keys(queryParams).includes('limit');
+    return Object.keys(queryParams).includes('from') &&
+      Object.keys(queryParams).includes('to') &&
+      (Object.keys(queryParams).length === 2);
   }
 
   static isOptionLimit = (
-    queryParams: { limit?: string, from?: string, to?: string }
+    queryParams: ISearchOptions
   ): boolean => {
-    return !(Object.keys(queryParams).includes('from') ||
-      Object.keys(queryParams).includes('to')) &&
-      Object.keys(queryParams).includes('limit');
+    return Object.keys(queryParams).includes('limit') &&
+      (Object.keys(queryParams).length === 1);
   }
 
   static isOptionFromToAndLimit = (
-    queryParams: { limit?: string, from?: string, to?: string }
+    queryParams: ISearchOptions
   ): boolean => {
-    return (Object.keys(queryParams).includes('from') &&
-      Object.keys(queryParams).includes('to')) &&
-      Object.keys(queryParams).includes('limit');
+    const params = Object.keys(queryParams);
+    return params.includes('from') && params.includes('to') &&
+      params.includes('limit') && (params.length === 3);
   }
 
   static getChosenOptions = (
-    queryParams: { limit?: string, from?: string, to?: string }
-  ): ChosenOptions => {
-    let options: ChosenOptions;
+    queryParams: ISearchOptions
+  ): ESearchOptions => {
+    let options: ESearchOptions;
     if (AnalyticsController.isOptionFromTo(queryParams)) {
-      options = ChosenOptions.FromTo;
+      options = ESearchOptions.FromTo;
     } else if (AnalyticsController.isOptionLimit(queryParams)) {
-      options = ChosenOptions.Limit;
+      options = ESearchOptions.Limit;
     } else if (AnalyticsController.isOptionFromToAndLimit(queryParams)) {
-      options = ChosenOptions.FromToAndLimit;
+      options = ESearchOptions.FromToAndLimit;
     } else if (Object.keys(queryParams).length === 0) {
-      options = ChosenOptions.NoOptions;
+      options = ESearchOptions.NoOptions;
     }
     return options;
   }
@@ -136,20 +128,20 @@ export default class AnalyticsController {
   }
   
   retrievePageViews = async (
-    queryParams: { limit?: string, from?: string, to?: string }
+    queryParams: ISearchOptions
   ): Promise<mongoose.Document[]> => {
     let retrievedPageViews: mongoose.Document[];
     switch (AnalyticsController.getChosenOptions(queryParams)) {
-      case ChosenOptions.NoOptions:
+      case ESearchOptions.NoOptions:
         retrievedPageViews = await this.PageView.find();
         break;
-      case ChosenOptions.FromTo:
+      case ESearchOptions.FromTo:
         retrievedPageViews = await this.searchBetweenDates(queryParams.from, queryParams.to);
         break;
-      case ChosenOptions.Limit:
+      case ESearchOptions.Limit:
         retrievedPageViews = await this.PageView.find().limit(Number(queryParams.limit));
         break;
-      case ChosenOptions.FromToAndLimit:
+      case ESearchOptions.FromToAndLimit:
         retrievedPageViews = await this.searchBetweenDates(queryParams.from, queryParams.to)
           .limit(Number(queryParams.limit));
         break;
@@ -161,7 +153,7 @@ export default class AnalyticsController {
   }
 
   retrieveOrUpdateOrDeletePageView = async (
-    operation: string, queryParams: { id?: string }, newPageView?: mongoose.Document
+    operation: string, queryParams: { id?: string }, newPageView?: IUpdPageView
   ): Promise<mongoose.Document> => {
     AnalyticsController.validateIdSearchQuery(queryParams);
     const id = queryParams.id;
@@ -182,7 +174,7 @@ export default class AnalyticsController {
   }
   
   updatePageView = (
-    queryParams: { id?: string }, newPageView: mongoose.Document
+    queryParams: { id?: string }, newPageView: IUpdPageView
   ): Promise<mongoose.Document> => {
     return this.retrieveOrUpdateOrDeletePageView('upd', queryParams, newPageView);
   }

@@ -1,5 +1,5 @@
-import AnalyticsController, { ChosenOptions } from '../src/controller/analyticsController';
-
+import AnalyticsController from '../src/controller/analyticsController';
+import { ESearchOptions } from '../src/controller/searchOptions.enum';
 
 test('normalizeLanguage on an empty string is an empty string', () => {
   const lang = '';
@@ -52,22 +52,22 @@ test('normalizePath removes trailing "/"', () => {
 
 test('getChosenOptions for empty query string is NoOptions', () => {
   const qs = {};
-  expect(AnalyticsController.getChosenOptions(qs)).toBe(ChosenOptions.NoOptions);
+  expect(AnalyticsController.getChosenOptions(qs)).toBe(ESearchOptions.NoOptions);
 });
 
 test('getChosenOptions for query string with "limit" parameter returns "Limit"', () => {
-  const qs = { pageSize: 20, limit: 5, CSRF_TOKEN: 'RPYH' };
-  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(ChosenOptions.Limit);
+  const qs = { limit: 5 };
+  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(ESearchOptions.Limit);
 });
 
 test('getChosenOptions for query string with "from" & "to" parameters returns "FromTo"', () => {
-  const qs = { pageSize: 20, from: '2010-01-01', CSRF_TOKEN: 'RPYH', to: '2010-12-11' };
-  expect(AnalyticsController.getChosenOptions(qs)).toBe(ChosenOptions.FromTo);
+  const qs = { from: '2010-01-01', to: '2010-12-11' };
+  expect(AnalyticsController.getChosenOptions(qs)).toBe(ESearchOptions.FromTo);
 });
 
 test('getChosenOptions for query string with "from", "to" & "limit" parameters returns "FromToAndLimit"', () => {
-  const qs = { limit: 5, pageSize: 20, from: '2010-01-01', CSRF_TOKEN: 'RPYH', to: '2010-12-11' };
-  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(ChosenOptions.FromToAndLimit);
+  const qs = { limit: 5, from: '2010-01-01', to: '2010-12-11' };
+  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(ESearchOptions.FromToAndLimit);
 });
 
 test('validateIdSearchQuery does not throw Error if only id parameter exists', () => {
