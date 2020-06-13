@@ -30,7 +30,7 @@ export default class AnalyticsController {
   }
 
   static normalizePath = (path: string): string => {
-    let norm = path.replace(/\.html$|\/$/, '');
+    let norm = path.replace(/\.html$|(?<=.+)\/$/, '');
     norm = norm.replace(/^\/index$/, '/');
     return norm.toLowerCase();
   }
