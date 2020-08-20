@@ -14,7 +14,7 @@ const app = express(),
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 app.use('/public/css', express.static(path.join(__dirname, '/public/css')));
