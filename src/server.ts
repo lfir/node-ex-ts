@@ -1,20 +1,20 @@
 import dotenv from 'dotenv';
+import * as corsConfig from './configuration/corsConfiguration';
+import * as swaggerUi from 'swagger-ui-express';
+import AnalyticsController from './controller/analyticsController';
 import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import morgan from 'morgan';
 import path from 'path';
-import AnalyticsController from './controller/analyticsController';
-import * as corsConfig from './configuration/corsConfiguration';
-import * as swaggerUi from 'swagger-ui-express';
+import { mongooseOptions } from './configuration/mongooseConfiguration';
 import { openApiDocumentation } from './configuration/openApiDocumentation';
-
 
 const app = express(),
   ctrl: AnalyticsController = new AnalyticsController();
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_URI, mongooseOptions);
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 app.use('/public/css', express.static(path.join(__dirname, '/public/css')));
