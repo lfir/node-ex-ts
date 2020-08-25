@@ -1,13 +1,19 @@
-// Set Copyright text in the Footer.
-document.getElementById("copyrightP").innerHTML = "Copyright &copy; <a href='mailto:psljp@protonmail.com'>Asta86</a> - " + (new Date()).getFullYear();
-// Set API Docs link target.
-document.getElementById("apidoca").setAttribute("href", window.location.href.match(/https?:\/\/[^\/]+/)[0] + "/api/docs");
-// Set contact icons image links.
-var img0 = "<img src='https://drive.google.com/uc?export=view&id=1-2f91KVxogS_Kvhd2kyZkojc1a-92Ye8' alt='GitHub Logo' title='GitHub Profile' style='width:60px;height:60px;margin-right:20px;'>";
-var a0 = "<a href='https://github.com/Asta1986' target='_blank' rel='noreferrer noopener'>" + img0 + "</a>";
-var img1 = "<img src='https://drive.google.com/uc?export=view&id=1c-cPqpmdzaEBznzalTk7m2DC8TU6bTyN' alt='Email Icon' title='Send Email' style='width:60px;height:60px;margin-left:20px;'>";
-var a1 = "<a href='mailto:psljp@protonmail.com'>" + img1 + "</a>";
-document.getElementById("sociconsdiv").innerHTML = a0 + a1;
+
+const email = "mailto:psljp@protonmail.com";
+const emailLinkElem = "Copyright &copy; <a href=" + email + ">Asta86</a> - " + (new Date()).getFullYear();
+const docsUrl = window.location.href.match(/https?:\/\/[^\/]+/)[0] + "/api/docs";
+const img0 = "<img src='https://asta86.gitlab.io/img/logo-github.png' alt='GitHub Logo' title='GitHub Profile' style='width:60px;height:60px;margin-right:20px;'>";
+const a0 = "<a href='https://github.com/Asta1986' target='_blank' rel='noreferrer noopener'>" + img0 + "</a>";
+const img1 = "<img src='https://asta86.gitlab.io/img/email-button.png' alt='Email Icon' title='Send Email' style='width:60px;height:60px;margin-left:20px;'>";
+const a1 = "<a href=" + email + ">" + img1 + "</a>";
+document.addEventListener('DOMContentLoaded', function() {
+  // Add contact icons.
+  document.getElementById("sociconsdiv").innerHTML = a0 + a1;
+  // Add Copyright link to the Footer.
+  document.getElementById("copyrightP").innerHTML = emailLinkElem;
+  // Set the target of the API Docs link.
+  document.getElementById("apidoca").setAttribute("href", docsUrl);
+});
 
 /* -----------------------------------------------
 /* How to use? : Check the GitHub README
