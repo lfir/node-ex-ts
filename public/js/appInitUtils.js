@@ -1,12 +1,12 @@
-
-const email = "mailto:psljp@protonmail.com";
-const emailLinkElem = "Copyright &copy; <a href=" + email + ">Asta86</a> - " + (new Date()).getFullYear();
-const docsUrl = window.location.href.match(/https?:\/\/[^\/]+/)[0] + "/api/docs";
-const img0 = "<img src='https://asta86.gitlab.io/img/logo-github.png' alt='GitHub Logo' title='GitHub Profile' style='width:60px;height:60px;margin-right:20px;'>";
-const a0 = "<a href='https://github.com/Asta1986' target='_blank' rel='noreferrer noopener'>" + img0 + "</a>";
-const img1 = "<img src='https://asta86.gitlab.io/img/email-button.png' alt='Email Icon' title='Send Email' style='width:60px;height:60px;margin-left:20px;'>";
-const a1 = "<a href=" + email + ">" + img1 + "</a>";
-document.addEventListener('DOMContentLoaded', function() {
+const email = "mailto:psljp@protonmail.com",
+  emailLinkElem = "Copyright &copy; <a href=" + email + ">Asta86</a> - " + (new Date()).getFullYear(),
+  docsUrl = window.location.href.match(/https?:\/\/[^\/]+/)[0] + "/api/docs",
+  baseImgUrl = "https://asta86.gitlab.io/img/",
+  img0 = "<img src='" + baseImgUrl + "logo-github.png' alt='GitHub Logo' title='GitHub Profile' style='width:60px;height:60px;margin-right:20px;'>",
+  a0 = "<a href='https://github.com/Asta1986' target='_blank' rel='noreferrer noopener'>" + img0 + "</a>",
+  img1 = "<img src='" + baseImgUrl + "email-button.png' alt='Email Icon' title='Send Email' style='width:60px;height:60px;margin-left:20px;'>",
+  a1 = "<a href=" + email + ">" + img1 + "</a>";
+document.addEventListener("DOMContentLoaded", function() {
   // Add contact icons.
   document.getElementById("sociconsdiv").innerHTML = a0 + a1;
   // Add Copyright link to the Footer.
@@ -25,7 +25,7 @@ particlesJS.load('particles-js', 'particles.json', function() {
 });
 */
 /* Otherwise just put the config content (json): */
-particlesJS('particles-js',
+particlesJS("particles-js",
   {
     "particles": {
       "number": {
