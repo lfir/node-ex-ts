@@ -22,7 +22,7 @@ export default class AnalyticsController {
 
   static normalizeLanguage = (accLangs: string): string => {
     let endCharPos = accLangs.length;
-    let nonLetterCharPos = accLangs.search(/[^a-z]/);
+    const nonLetterCharPos = accLangs.search(/[^a-z]/);
     if (nonLetterCharPos > -1) {
       endCharPos = nonLetterCharPos;
     }
@@ -30,7 +30,8 @@ export default class AnalyticsController {
   }
 
   static normalizePath = (path: string): string => {
-    let norm = path.replace(/\.html$|(?<=.+)\/$/, '');
+    // Remove trailing .html, / and extraneous characters from the path string.
+    let norm = path.replace(/\.html$|(?<=.+)\/$|[^\w-/.]/g, '');
     norm = norm.replace(/^\/index$/, '/');
     return norm.toLowerCase();
   }
@@ -42,7 +43,7 @@ export default class AnalyticsController {
     console.log('Event ip:', ip);
     console.log('Event geoip object:', geo);
     let newPageViewInfo: INewPageView = {
-      host: host,
+      host: host.replace(/[^\w-.]/g, ''),
       path: AnalyticsController.normalizePath(path),
     };
 
@@ -67,7 +68,7 @@ export default class AnalyticsController {
   }
   
   static validateIdSearchQuery = (queryParams: { id?: string }): void => {
-    if (!queryParams.id || (Object.keys(queryParams).length !== 1)) {
+    if (isNaN(parseInt(queryParams.id, 16)) || (Object.keys(queryParams).length !== 1)) {
       throw AnalyticsController.searchQueryError();
     }
   }
@@ -83,24 +84,23 @@ export default class AnalyticsController {
   static isOptionFromTo = (
     queryParams: ISearchOptions
   ): boolean => {
-    return Object.keys(queryParams).includes('from') &&
-      Object.keys(queryParams).includes('to') &&
+    return isFinite(Date.parse(queryParams.from)) &&
+      isFinite(Date.parse(queryParams.to)) &&
       (Object.keys(queryParams).length === 2);
   }
 
   static isOptionLimit = (
     queryParams: ISearchOptions
   ): boolean => {
-    return Object.keys(queryParams).includes('limit') &&
+    return isFinite(parseInt(queryParams.limit)) &&
       (Object.keys(queryParams).length === 1);
   }
 
   static isOptionFromToAndLimit = (
     queryParams: ISearchOptions
   ): boolean => {
-    const params = Object.keys(queryParams);
-    return params.includes('from') && params.includes('to') &&
-      params.includes('limit') && (params.length === 3);
+    return isFinite(Date.parse(queryParams.from)) && isFinite(Date.parse(queryParams.to)) &&
+      isFinite(parseInt(queryParams.limit)) && (Object.keys(queryParams).length === 3);
   }
 
   static getChosenOptions = (

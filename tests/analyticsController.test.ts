@@ -71,7 +71,7 @@ test('getChosenOptions for query string with "from", "to" & "limit" parameters r
 });
 
 test('validateIdSearchQuery does not throw Error if only id parameter exists', () => {
-  const queryParameters = { id: 'qwerty' };
+  const queryParameters = { id: 'e' };
   expect(AnalyticsController.validateIdSearchQuery(queryParameters)).toBeUndefined();
 });
 
