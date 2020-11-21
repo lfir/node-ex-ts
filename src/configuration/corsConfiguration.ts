@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import StatusCodeError from '../exception/statusCodeError';
 
-
 const acAllowOrg = 'Access-Control-Allow-Origin',
   acAllowMethods = 'Access-Control-Allow-Methods',
   allowedMethods = 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
@@ -20,7 +19,7 @@ export const allowOrBlockRequest = (
   const inCorsWhitelist = process.env.ALLOWED_HOSTS.split(' ').includes(reqOrg);
   const allowAnyOrigin = Boolean(process.env.ALLOW_ANY_ORIGIN);
   if (inCorsWhitelist || allowAnyOrigin) {
-    let origin = inCorsWhitelist ? reqOrg : '*';
+    const origin = inCorsWhitelist ? reqOrg : '*';
     res.setHeader(acAllowOrg, origin);
     setCommonHeaders(res);
     next();
