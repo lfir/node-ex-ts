@@ -6,7 +6,7 @@ import { INewPageView, IUpdPageView } from './pageView.interface';
 import { ISearchOptions } from './searchOptions.interface';
 
 export default class AnalyticsController {
-  schema: mongoose.Schema;
+  schema: mongoose.Schema<any>;
   PageView: mongoose.Model<mongoose.Document, {}>;
 
   constructor() {
