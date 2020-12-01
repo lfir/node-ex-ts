@@ -2,12 +2,12 @@ import geoip from 'geoip-lite';
 import mongoose from 'mongoose';
 import StatusCodeError from '../exception/statusCodeError';
 import { ESearchOptions } from './searchOptions.enum';
-import { INewPageView, IUpdPageView } from './pageView.interface';
+import { INewPageView, IUpdPageView, IPageView } from './pageView.interface';
 import { ISearchOptions } from './searchOptions.interface';
 
 export default class AnalyticsController {
-  schema: any;
-  PageView: any;
+  schema: mongoose.Schema;
+  PageView: mongoose.Model<IPageView>;
 
   constructor() {
     this.schema = new mongoose.Schema({
@@ -121,7 +121,7 @@ export default class AnalyticsController {
 
   searchBetweenDates = (
     from: string, to: string
-  ) => {
+  ): mongoose.Query<IPageView[], IPageView> => {
     const fromDate = new Date(from + 'T00:00:00Z'),
       toDate = new Date(to + 'T23:59:59Z');
     return this.PageView.find({ date: { '$gte': fromDate, '$lte': toDate } });
@@ -153,15 +153,15 @@ export default class AnalyticsController {
   }
 
   retrieveOrUpdateOrDeletePageView = async (
-    operation: string, queryParams: { id?: string }, newPageView?: IUpdPageView
+    operation: string, queryParams: { id?: string }, newPageView?: any
   ): Promise<mongoose.Document> => {
     AnalyticsController.validateIdSearchQuery(queryParams);
     const id = queryParams.id;
     let resultPageView: mongoose.Document;
     if (operation === 'get') {
-      resultPageView = await this.PageView.findById(id);
+      resultPageView = await this.PageView.findOne({ '_id': id });
     } else if (operation === 'upd') {
-      resultPageView = await this.PageView.findByIdAndUpdate(id, newPageView, { new: true });
+      resultPageView = await this.PageView.findByIdAndUpdate(id, newPageView, { new: true } as any);
     } else if (operation === 'del') {
       resultPageView = await this.PageView.findByIdAndRemove(id);
     }

@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 export interface INewPageView {
     host: string,
     path: string,
@@ -12,4 +14,12 @@ export interface IUpdPageView {
     path?: string,
     language?: string,
     country?: string
+}
+
+export interface IPageView extends mongoose.Document {
+    host: string,
+    path: string,
+    language?: string,
+    country?: string,
+    date: Date
 }
