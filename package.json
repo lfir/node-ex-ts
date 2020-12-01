@@ -24,7 +24,7 @@
     "ts-jest": "^26.4.4"
   },
   "engines": {
-    "node": "15.x"
+    "node": "12.x"
   },
   "scripts": {
     "build-ts": "tsc",
