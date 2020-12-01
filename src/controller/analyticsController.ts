@@ -7,7 +7,7 @@ import { ISearchOptions } from './searchOptions.interface';
 
 export default class AnalyticsController {
   schema: any;
-  PageView: mongoose.Model<mongoose.Document, {}>;
+  PageView: any;
 
   constructor() {
     this.schema = new mongoose.Schema({
@@ -121,7 +121,7 @@ export default class AnalyticsController {
 
   searchBetweenDates = (
     from: string, to: string
-  ): mongoose.DocumentQuery<mongoose.Document[], mongoose.Document, {}> => {
+  ) => {
     const fromDate = new Date(from + 'T00:00:00Z'),
       toDate = new Date(to + 'T23:59:59Z');
     return this.PageView.find({ date: { '$gte': fromDate, '$lte': toDate } });
