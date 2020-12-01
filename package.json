@@ -33,7 +33,8 @@
     "cp-static-dirs": "cp -r ./package.json ./public ./views ./dist",
     "serve": "node dist/server.js",
     "start": "npm run build-ts && npm run cp-static-dirs && npm run serve",
-    "test": "jest"
+    "test": "jest",
+    "testCI": "jest --testPathIgnorePatterns .*Integration.*"
   },
   "repository": {
     "type": "git",
