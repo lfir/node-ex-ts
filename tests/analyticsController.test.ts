@@ -82,6 +82,6 @@ test('validateIdSearchQuery throws Error with correct message if no id parameter
 });
 
 test('validateIdSearchQuery throws Error if extra parameter exists', () => {
-  const queryParameters = { tst: 123, id: 'qwerty' };
+  const queryParameters = { tst: 123, id: '1af' };
   expect(() => AnalyticsController.validateIdSearchQuery(queryParameters)).toThrow(Error);
 });

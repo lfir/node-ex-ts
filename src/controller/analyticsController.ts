@@ -68,7 +68,7 @@ export default class AnalyticsController {
   }
   
   static validateIdSearchQuery = (queryParams: { id?: string }): void => {
-    if (isNaN(parseInt(queryParams.id, 16)) || (Object.keys(queryParams).length !== 1)) {
+    if (!queryParams.id || /[^\da-f]/i.test(queryParams.id) || (Object.keys(queryParams).length !== 1)) {
       throw AnalyticsController.searchQueryError();
     }
   }
@@ -77,22 +77,24 @@ export default class AnalyticsController {
     if (!pageViews || (Array.isArray(pageViews) && !pageViews.length)) {
       throw AnalyticsController.pageViewNotFoundError();
     }
-  };
+  }
+
+  static validDate = (strdate: string): boolean => {
+    return isFinite(Date.parse(strdate)) && /^\d{4}-\d{2}-\d{2}$/.test(strdate);
+  }
 
   static isOptionFromTo = (queryParams: ISearchOptions): boolean => {
-    return isFinite(Date.parse(queryParams.from)) &&
-      isFinite(Date.parse(queryParams.to)) &&
-      (Object.keys(queryParams).length === 2);
+    return (Object.keys(queryParams).length === 2) &&
+      AnalyticsController.validDate(queryParams.from) && AnalyticsController.validDate(queryParams.to);
   }
 
   static isOptionLimit = (queryParams: ISearchOptions): boolean => {
-    return isFinite(parseInt(queryParams.limit)) &&
-      (Object.keys(queryParams).length === 1);
+    return /^\d+$/.test(queryParams.limit) && (Object.keys(queryParams).length === 1);
   }
 
   static isOptionFromToAndLimit = (queryParams: ISearchOptions): boolean => {
-    return isFinite(Date.parse(queryParams.from)) && isFinite(Date.parse(queryParams.to)) &&
-      isFinite(parseInt(queryParams.limit)) && (Object.keys(queryParams).length === 3);
+    return /^\d+$/.test(queryParams.limit) && (Object.keys(queryParams).length === 3) &&
+      AnalyticsController.validDate(queryParams.from) && AnalyticsController.validDate(queryParams.to);
   }
 
   static getChosenOptions = (queryParams: ISearchOptions): ESearchOptions => {
@@ -159,9 +161,12 @@ export default class AnalyticsController {
     return this.retrieveOrUpdateOrDeletePageView('get', queryParams);
   }
   
-  updatePageView = (
-    queryParams: { id?: string }, newPageView: IUpdPageView
-  ): Promise<mongoose.Document> => {
+  updatePageView = (queryParams: { id?: string }, newPageView: IUpdPageView): Promise<mongoose.Document> => {
+    if (newPageView.host) newPageView.host = newPageView.host.replace(/[^\w-.]/g, '');
+    if (newPageView.path) newPageView.path = AnalyticsController.normalizePath(newPageView.path);
+    if (newPageView.language) newPageView.language = AnalyticsController.normalizeLanguage(newPageView.language);
+    if (newPageView.country) newPageView.country = newPageView.country.replace(/[^a-z]/g, '');
+    if (newPageView.date && !AnalyticsController.validDate(newPageView.date)) throw AnalyticsController.searchQueryError();
     return this.retrieveOrUpdateOrDeletePageView('upd', queryParams, newPageView);
   }
   
