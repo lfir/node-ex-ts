@@ -1,7 +1,8 @@
-import AnalyticsController from '../src/controller/analyticsController';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { mongooseOptions } from '../src/configuration/mongooseConfiguration';
+import AnalyticsController from '../src/controller/analyticsController';
+import { IUpdPageView } from '../src/controller/pageView.interface';
 
 const ctrl: AnalyticsController = new AnalyticsController();
 
@@ -36,7 +37,7 @@ test('CRUD operations can be executed', async () => {
     idObj = { id: createdRecordId },
     retrievedRecordHost = (await ctrl.retrievePageView(idObj)).get('host'),
     exptectedPath = '/tmp',
-    newPathObj: any = { path: exptectedPath },
+    newPathObj: IUpdPageView = { path: exptectedPath },
     updatedRecordPath = (await ctrl.updatePageView(idObj, newPathObj)).get('path'),
     deletedRecordId = (await ctrl.deletePageView(idObj)).get('_id');
 

@@ -1,8 +1,8 @@
 import geoip from 'geoip-lite';
 import mongoose from 'mongoose';
 import StatusCodeError from '../exception/statusCodeError';
+import { INewPageView, IPageView, IUpdPageView } from './pageView.interface';
 import { ESearchOptions } from './searchOptions.enum';
-import { INewPageView, IUpdPageView, IPageView } from './pageView.interface';
 import { ISearchOptions } from './searchOptions.interface';
 
 export default class AnalyticsController {
@@ -73,39 +73,29 @@ export default class AnalyticsController {
     }
   }
   
-  static validateRetrievedRecords = (
-    pageViews: mongoose.Document | mongoose.Document[]
-  ): void => {
+  static validateRetrievedRecords = (pageViews: mongoose.Document | mongoose.Document[]): void => {
     if (!pageViews || (Array.isArray(pageViews) && !pageViews.length)) {
       throw AnalyticsController.pageViewNotFoundError();
     }
   };
 
-  static isOptionFromTo = (
-    queryParams: ISearchOptions
-  ): boolean => {
+  static isOptionFromTo = (queryParams: ISearchOptions): boolean => {
     return isFinite(Date.parse(queryParams.from)) &&
       isFinite(Date.parse(queryParams.to)) &&
       (Object.keys(queryParams).length === 2);
   }
 
-  static isOptionLimit = (
-    queryParams: ISearchOptions
-  ): boolean => {
+  static isOptionLimit = (queryParams: ISearchOptions): boolean => {
     return isFinite(parseInt(queryParams.limit)) &&
       (Object.keys(queryParams).length === 1);
   }
 
-  static isOptionFromToAndLimit = (
-    queryParams: ISearchOptions
-  ): boolean => {
+  static isOptionFromToAndLimit = (queryParams: ISearchOptions): boolean => {
     return isFinite(Date.parse(queryParams.from)) && isFinite(Date.parse(queryParams.to)) &&
       isFinite(parseInt(queryParams.limit)) && (Object.keys(queryParams).length === 3);
   }
 
-  static getChosenOptions = (
-    queryParams: ISearchOptions
-  ): ESearchOptions => {
+  static getChosenOptions = (queryParams: ISearchOptions): ESearchOptions => {
     let options: ESearchOptions;
     if (AnalyticsController.isOptionFromTo(queryParams)) {
       options = ESearchOptions.FromTo;
@@ -119,17 +109,13 @@ export default class AnalyticsController {
     return options;
   }
 
-  searchBetweenDates = (
-    from: string, to: string
-  ): mongoose.Query<IPageView[], IPageView> => {
+  searchBetweenDates = (from: string, to: string): mongoose.Query<IPageView[], IPageView> => {
     const fromDate = new Date(from + 'T00:00:00Z'),
       toDate = new Date(to + 'T23:59:59Z');
     return this.PageView.find({ date: { '$gte': fromDate, '$lte': toDate } });
   }
   
-  retrievePageViews = async (
-    queryParams: ISearchOptions
-  ): Promise<mongoose.Document[]> => {
+  retrievePageViews = async (queryParams: ISearchOptions): Promise<mongoose.Document[]> => {
     let retrievedPageViews: mongoose.Document[];
     switch (AnalyticsController.getChosenOptions(queryParams)) {
       case ESearchOptions.NoOptions:
@@ -153,7 +139,7 @@ export default class AnalyticsController {
   }
 
   retrieveOrUpdateOrDeletePageView = async (
-    operation: string, queryParams: { id?: string }, newPageView?: any
+    operation: string, queryParams: { id?: string }, newPageView?: IUpdPageView
   ): Promise<mongoose.Document> => {
     AnalyticsController.validateIdSearchQuery(queryParams);
     const id = queryParams.id;
@@ -161,7 +147,7 @@ export default class AnalyticsController {
     if (operation === 'get') {
       resultPageView = await this.PageView.findOne({ '_id': id });
     } else if (operation === 'upd') {
-      resultPageView = await this.PageView.findByIdAndUpdate(id, newPageView, { new: true } as any);
+      resultPageView = await this.PageView.findByIdAndUpdate(id, newPageView as Object, { new: true } as Object);
     } else if (operation === 'del') {
       resultPageView = await this.PageView.findByIdAndRemove(id);
     }
