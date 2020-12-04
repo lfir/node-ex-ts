@@ -14,5 +14,7 @@ module.exports = {
     testMatch: [
         '**/tests/**/*.test.(ts|js)'
     ],
-    testEnvironment: 'node'
+    testEnvironment: 'node',
+    coverageDirectory: './coverage/',
+    collectCoverage: true
 };

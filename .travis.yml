@@ -2,5 +2,5 @@ language: node_js
 node_js:
   - 14
 script: 
-  - npm install
-  - npm run testCI
+  - npm install codecov -g
+  - npm run testCI && codecov
