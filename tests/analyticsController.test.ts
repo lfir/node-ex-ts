@@ -1,5 +1,17 @@
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
 import AnalyticsController from '../src/controller/analyticsController';
+import { IUpdPageView } from '../src/controller/pageView.interface';
 import { ESearchOptions } from '../src/controller/searchOptions.enum';
+
+let mongoServer: MongoMemoryServer;
+const ctrl: AnalyticsController = new AnalyticsController();
+
+beforeAll(async () => {
+  mongoServer = new MongoMemoryServer();
+  const mongoUri = await mongoServer.getUri();
+  mongoose.connect(mongoUri);
+});
 
 test('normalizeLanguage on an empty string is an empty string', () => {
   const lang = '';
@@ -84,4 +96,35 @@ test('validateIdSearchQuery throws Error with correct message if no id parameter
 test('validateIdSearchQuery throws Error if extra parameter exists', () => {
   const queryParameters = { tst: 123, id: '1af' };
   expect(() => AnalyticsController.validateIdSearchQuery(queryParameters)).toThrow(Error);
+});
+
+test('retrievePageViews gets number of records specified by limit param', async () => {
+  for (let i = 0; i < 3; i++) await ctrl.storePageView('itest', '/tst');
+  const datal1 = ctrl.retrievePageViews({ limit: '1' });
+  const datal2 = ctrl.retrievePageViews({ limit: '2' });
+
+  const results = await Promise.all([datal1, datal2]);
+
+  expect(results[0].length).toEqual(1);
+  expect(results[1].length).toEqual(2);
+});
+
+test('retrievePageViews gets records in range specified by from and to params only', async () => {
+  const expectedDate = '2020-05-20',
+    createdRecordId = (await ctrl.storePageView('itest', '/tst')).get('_id'),
+    idObj = { id: createdRecordId },
+    newDateObj: IUpdPageView = { date: expectedDate };
+  await ctrl.updatePageView(idObj, newDateObj);
+  await ctrl.storePageView('itest', '/tst');
+
+  const results = await ctrl.retrievePageViews({ from: expectedDate, to: expectedDate });
+  const receivedDate = results[0].get('date').toJSON();
+
+  expect(receivedDate).toMatch(expectedDate);
+  expect(results.length).toEqual(1);
+});
+
+afterAll(async () => {
+  await mongoose.disconnect();
+  await mongoServer.stop();
 });
