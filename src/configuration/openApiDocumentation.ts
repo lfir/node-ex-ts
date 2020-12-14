@@ -10,22 +10,22 @@ export const openApiDocumentation = {
     contact: {
       name: pkgData.author.replace(/ .+/, ''),
       email: pkgData.author.split(' ')[1].replace(/<|>/g, ''),
-      url: pkgData.author.split(' ')[2].replace(/\(|\)/g, ''),
+      url: pkgData.author.split(' ')[2].replace(/\(|\)/g, '')
     },
     license: {
       name: pkgData.license,
-      url: 'https://spdx.org/licenses/' + pkgData.license + '.html#licenseText',
-    },
+      url: 'https://spdx.org/licenses/' + pkgData.license + '.html#licenseText'
+    }
   },
   servers: [
     {
       url: 'http://localhost:8080',
-      description: 'Local server',
+      description: 'Local server'
     },
     {
       url: pkgData.homepage,
-      description: 'Development server',
-    },
+      description: 'Development server'
+    }
   ],
   tags: ['CRUD operations', 'Status report'],
   paths: {
@@ -36,22 +36,24 @@ export const openApiDocumentation = {
         operationId: 'getStatusReport',
         responses: {
           '200': {
-            description: 'Status report object generated and JSON response sent.',
+            description:
+              'Status report object generated and JSON response sent.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/StatusReport',
-                },
-              },
-            },
-          },
-        },
+                  $ref: '#/components/schemas/StatusReport'
+                }
+              }
+            }
+          }
+        }
       }
     },
     '/api/pageviews': {
       get: {
         tags: ['CRUD operations'],
-        description: 'Get one or more Page Views at once. If no filters are provided all records in the database are retrieved.',
+        description:
+          'Get one or more Page Views at once. If no filters are provided all records in the database are retrieved.',
         operationId: 'getPageViews',
         parameters: [
           {
@@ -70,7 +72,8 @@ export const openApiDocumentation = {
               type: 'integer'
             },
             required: false,
-            description: 'Number of records to fetch. Can be used alone or combined with from and to.',
+            description:
+              'Number of records to fetch. Can be used alone or combined with from and to.',
             example: 5
           },
           {
@@ -80,7 +83,8 @@ export const openApiDocumentation = {
               type: 'string'
             },
             required: false,
-            description: 'Initial date in format yyyy-mm-dd. Has to be used along with to.',
+            description:
+              'Initial date in format yyyy-mm-dd. Has to be used along with to.',
             example: '2020-04-07'
           },
           {
@@ -90,49 +94,53 @@ export const openApiDocumentation = {
               type: 'string'
             },
             required: false,
-            description: 'End date in format yyyy-mm-dd. Has to be used along with from.',
+            description:
+              'End date in format yyyy-mm-dd. Has to be used along with from.',
             example: '2020-04-08'
-          },
+          }
         ],
         responses: {
           '200': {
-            description: 'Records were successfully retrieved from the database.',
+            description:
+              'Records were successfully retrieved from the database.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/PageViewFinal',
-                },
-              },
-            },
+                  $ref: '#/components/schemas/PageViewFinal'
+                }
+              }
+            }
           },
           '400': {
-            description: 'Missing or extraneous parameters in the query string.',
+            description:
+              'Missing or extraneous parameters in the query string.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/Error'
                 },
                 example: {
                   message: 'Invalid search query.'
-                },
-              },
-            },
+                }
+              }
+            }
           },
           '404': {
             description: 'No results found.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/Error'
                 },
                 example: {
-                  message: 'No records were found in the database matching the criteria provided.'
-                },
-              },
-            },
+                  message:
+                    'No records were found in the database matching the criteria provided.'
+                }
+              }
+            }
           }
-        },
-      },
+        }
+      }
     },
     '/api/pageview': {
       get: {
@@ -166,42 +174,45 @@ export const openApiDocumentation = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/PageViewFinal',
-                },
-              },
-            },
+                  $ref: '#/components/schemas/PageViewFinal'
+                }
+              }
+            }
           },
           '400': {
-            description: 'Missing id parameter or extraneous parameters in the query string.',
+            description:
+              'Missing id parameter or extraneous parameters in the query string.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/Error'
                 },
                 example: {
                   message: 'Invalid search query.'
-                },
-              },
-            },
+                }
+              }
+            }
           },
           '404': {
             description: 'Non existent ObjectID.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/Error'
                 },
                 example: {
-                  message: 'No records were found in the database matching the criteria provided.'
-                },
-              },
-            },
+                  message:
+                    'No records were found in the database matching the criteria provided.'
+                }
+              }
+            }
           }
-        },
+        }
       },
       put: {
         tags: ['CRUD operations'],
-        description: 'Update a specific Page View record. Only fields with new values need to be provided.',
+        description:
+          'Update a specific Page View record. Only fields with new values need to be provided.',
         operationId: 'PageViewFinal',
         parameters: [
           {
@@ -228,9 +239,9 @@ export const openApiDocumentation = {
           content: {
             'application/json': {
               schema: {
-                $ref: '#/components/schemas/PageViewFinal',
-              },
-            },
+                $ref: '#/components/schemas/PageViewFinal'
+              }
+            }
           },
           required: true
         },
@@ -240,38 +251,40 @@ export const openApiDocumentation = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/PageViewFinal',
-                },
-              },
-            },
+                  $ref: '#/components/schemas/PageViewFinal'
+                }
+              }
+            }
           },
           '400': {
-            description: 'Missing id parameter or extraneous parameters in the query string.',
+            description:
+              'Missing id parameter or extraneous parameters in the query string.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/Error'
                 },
                 example: {
                   message: 'Invalid search query.'
-                },
-              },
-            },
+                }
+              }
+            }
           },
           '404': {
             description: 'Non existent ObjectID.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/Error'
                 },
                 example: {
-                  message: 'No records were found in the database matching the criteria provided.'
-                },
-              },
-            },
+                  message:
+                    'No records were found in the database matching the criteria provided.'
+                }
+              }
+            }
           }
-        },
+        }
       },
       delete: {
         tags: ['CRUD operations'],
@@ -304,44 +317,47 @@ export const openApiDocumentation = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/PageViewFinal',
-                },
-              },
-            },
+                  $ref: '#/components/schemas/PageViewFinal'
+                }
+              }
+            }
           },
           '400': {
-            description: 'Missing id parameter or extraneous parameters in the query string.',
+            description:
+              'Missing id parameter or extraneous parameters in the query string.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/Error'
                 },
                 example: {
                   message: 'Invalid search query.'
-                },
-              },
-            },
+                }
+              }
+            }
           },
           '404': {
             description: 'Non existent ObjectID.',
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/Error'
                 },
                 example: {
-                  message: 'No records were found in the database matching the criteria provided.'
-                },
-              },
-            },
+                  message:
+                    'No records were found in the database matching the criteria provided.'
+                }
+              }
+            }
           }
-        },
+        }
       }
     },
     '/api/newpageview': {
       post: {
         tags: ['CRUD operations'],
-        description: 'Create a new Page View event and store it in the database.',
+        description:
+          'Create a new Page View event and store it in the database.',
         operationId: 'createPageView',
         parameters: [
           {
@@ -360,16 +376,17 @@ export const openApiDocumentation = {
               $ref: '#/components/schemas/aclheader'
             },
             required: true,
-            description: 'Indicates which languages the client is able to understand.'
+            description:
+              'Indicates which languages the client is able to understand.'
           }
         ],
         requestBody: {
           content: {
             'application/json': {
               schema: {
-                $ref: '#/components/schemas/PageView',
-              },
-            },
+                $ref: '#/components/schemas/PageView'
+              }
+            }
           },
           required: true
         },
@@ -379,9 +396,9 @@ export const openApiDocumentation = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/PageViewFinal',
-                },
-              },
+                  $ref: '#/components/schemas/PageViewFinal'
+                }
+              }
             }
           },
           '500': {
@@ -389,16 +406,17 @@ export const openApiDocumentation = {
             content: {
               'application/json': {
                 schema: {
-                  $ref: '#/components/schemas/Error',
+                  $ref: '#/components/schemas/Error'
                 },
                 example: {
-                  message: 'ValidationError: PageView validation failed: host: Path `host` is required.'
-                },
-              },
-            },
-          },
-        },
-      },
+                  message:
+                    'ValidationError: PageView validation failed: host: Path `host` is required.'
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   components: {
@@ -406,23 +424,23 @@ export const openApiDocumentation = {
       nodestatus: {
         type: 'string',
         description: 'Node.js server status.',
-        example: 'ok',
+        example: 'ok'
       },
       mongostatus: {
         type: 'string',
         description: 'Mongoose/MongoDB connection status.',
-        example: 'nok',
+        example: 'nok'
       },
       StatusReport: {
         type: 'object',
         properties: {
           nodestatus: {
-            $ref: '#/components/schemas/nodestatus',
+            $ref: '#/components/schemas/nodestatus'
           },
           mongostatus: {
-            $ref: '#/components/schemas/mongostatus',
+            $ref: '#/components/schemas/mongostatus'
           }
-        },
+        }
       },
       originheader: {
         type: 'string',
@@ -465,13 +483,13 @@ export const openApiDocumentation = {
         type: 'object',
         properties: {
           host: {
-            $ref: '#/components/schemas/host',
+            $ref: '#/components/schemas/host'
           },
           path: {
-            $ref: '#/components/schemas/path',
+            $ref: '#/components/schemas/path'
           },
           ip: {
-            $ref: '#/components/schemas/ip',
+            $ref: '#/components/schemas/ip'
           }
         }
       },
@@ -479,16 +497,16 @@ export const openApiDocumentation = {
         type: 'object',
         properties: {
           host: {
-            $ref: '#/components/schemas/host',
+            $ref: '#/components/schemas/host'
           },
           path: {
-            $ref: '#/components/schemas/path',
+            $ref: '#/components/schemas/path'
           },
           language: {
-            $ref: '#/components/schemas/language',
+            $ref: '#/components/schemas/language'
           },
           country: {
-            $ref: '#/components/schemas/country',
+            $ref: '#/components/schemas/country'
           }
         }
       },
@@ -496,11 +514,11 @@ export const openApiDocumentation = {
         type: 'object',
         properties: {
           message: {
-            type: 'string',
+            type: 'string'
           },
           statusCode: {
-            type: 'string',
-          },
+            type: 'string'
+          }
         }
       }
     }

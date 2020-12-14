@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import StatusCodeError from '../exception/statusCodeError';
 
 const acAllowOrg = 'Access-Control-Allow-Origin',
@@ -13,7 +13,9 @@ function setCommonHeaders(res: Response): void {
 }
 
 export const allowOrBlockRequest = (
-  req: Request, res: Response, next: NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ): void => {
   const reqOrg = String(req.headers['origin']);
   const inCorsWhitelist = process.env.ALLOWED_HOSTS.split(' ').includes(reqOrg);
@@ -26,12 +28,14 @@ export const allowOrBlockRequest = (
   } else {
     next(new StatusCodeError('Access denied by CORS policy.', 403));
   }
-}
+};
 
 export const allowRequest = (
-  _req: Request, res: Response, next: NextFunction
+  _req: Request,
+  res: Response,
+  next: NextFunction
 ): void => {
   res.setHeader(acAllowOrg, '*');
   setCommonHeaders(res);
   next();
-}
+};

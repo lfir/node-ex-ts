@@ -24,7 +24,10 @@ test('retrievePageViews gets number of records specified by limit param', async 
 test('retrievePageViews gets records in range specified by from and to params only', async () => {
   const expectedDate = '2020-05-20';
 
-  const results = await ctrl.retrievePageViews({ from: expectedDate, to: expectedDate });
+  const results = await ctrl.retrievePageViews({
+    from: expectedDate,
+    to: expectedDate
+  });
   const receivedDate = results[0].get('date').toJSON();
 
   expect(receivedDate).toMatch(expectedDate);
@@ -33,12 +36,16 @@ test('retrievePageViews gets records in range specified by from and to params on
 
 test('CRUD operations can be executed', async () => {
   const expectedHost = 'itest',
-    createdRecordId = (await ctrl.storePageView(expectedHost, '/tst')).get('_id'),
+    createdRecordId = (await ctrl.storePageView(expectedHost, '/tst')).get(
+      '_id'
+    ),
     idObj = { id: createdRecordId },
     retrievedRecordHost = (await ctrl.retrievePageView(idObj)).get('host'),
     exptectedPath = '/tmp',
     newPathObj: IUpdPageView = { path: exptectedPath },
-    updatedRecordPath = (await ctrl.updatePageView(idObj, newPathObj)).get('path'),
+    updatedRecordPath = (await ctrl.updatePageView(idObj, newPathObj)).get(
+      'path'
+    ),
     deletedRecordId = (await ctrl.deletePageView(idObj)).get('_id');
 
   expect(createdRecordId).toBeTruthy();

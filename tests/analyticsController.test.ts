@@ -20,7 +20,9 @@ test('normalizeLanguage on an empty string is an empty string', () => {
 
 test('normalizeLanguage "en-US,en;q=0.9" returns "en"', () => {
   const lang = 'en-US,en;q=0.9';
-  expect(AnalyticsController.normalizeLanguage(lang)).toBe(lang.substring(0, 2));
+  expect(AnalyticsController.normalizeLanguage(lang)).toBe(
+    lang.substring(0, 2)
+  );
 });
 
 test('normalizeLanguage "cmn" returns "cmn"', () => {
@@ -29,13 +31,13 @@ test('normalizeLanguage "cmn" returns "cmn"', () => {
 });
 
 test('normalizePath removes ".html" extension from string', () => {
-    const path = '/test/pg1.html';
-    expect(AnalyticsController.normalizePath(path)).toBe(path.substring(0, 9));
+  const path = '/test/pg1.html';
+  expect(AnalyticsController.normalizePath(path)).toBe(path.substring(0, 9));
 });
 
 test('normalizePath replces path "/index.html" with "/"', () => {
-    const path = '/index.html';
-    expect(AnalyticsController.normalizePath(path)).toBe(path.substring(0, 1));
+  const path = '/index.html';
+  expect(AnalyticsController.normalizePath(path)).toBe(path.substring(0, 1));
 });
 
 test('normalizePath does not modify ".html" occurrences not at the end of the string', () => {
@@ -57,19 +59,27 @@ test('normalizePath removes trailing "/"', () => {
   const path0 = '/howto/';
   const path1 = '/how/to/';
   const path2 = '/how/to/write';
-  expect(AnalyticsController.normalizePath(path0)).toBe(path0.substring(0, path0.length - 1));
-  expect(AnalyticsController.normalizePath(path1)).toBe(path1.substring(0, path1.length - 1));
+  expect(AnalyticsController.normalizePath(path0)).toBe(
+    path0.substring(0, path0.length - 1)
+  );
+  expect(AnalyticsController.normalizePath(path1)).toBe(
+    path1.substring(0, path1.length - 1)
+  );
   expect(AnalyticsController.normalizePath(path2)).toBe(path2);
 });
 
 test('getChosenOptions for empty query string is NoOptions', () => {
   const qs = {};
-  expect(AnalyticsController.getChosenOptions(qs)).toBe(ESearchOptions.NoOptions);
+  expect(AnalyticsController.getChosenOptions(qs)).toBe(
+    ESearchOptions.NoOptions
+  );
 });
 
 test('getChosenOptions for query string with "limit" parameter returns "Limit"', () => {
   const qs = { limit: 5 };
-  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(ESearchOptions.Limit);
+  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(
+    ESearchOptions.Limit
+  );
 });
 
 test('getChosenOptions for query string with "from" & "to" parameters returns "FromTo"', () => {
@@ -79,23 +89,33 @@ test('getChosenOptions for query string with "from" & "to" parameters returns "F
 
 test('getChosenOptions for query string with "from", "to" & "limit" parameters returns "FromToAndLimit"', () => {
   const qs = { limit: 5, from: '2010-01-01', to: '2010-12-11' };
-  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(ESearchOptions.FromToAndLimit);
+  expect(AnalyticsController.getChosenOptions(qs as any)).toBe(
+    ESearchOptions.FromToAndLimit
+  );
 });
 
 test('validateIdSearchQuery does not throw Error if only id parameter exists', () => {
   const queryParameters = { id: 'e' };
-  expect(AnalyticsController.validateIdSearchQuery(queryParameters)).toBeUndefined();
+  expect(
+    AnalyticsController.validateIdSearchQuery(queryParameters)
+  ).toBeUndefined();
 });
 
 test('validateIdSearchQuery throws Error with correct message if no id parameter exists', () => {
   const queryParameters = { tst: 123 };
-  expect(() => AnalyticsController.validateIdSearchQuery(queryParameters as any)).toThrow(Error);
-  expect(() => AnalyticsController.validateIdSearchQuery(queryParameters as any)).toThrow('Invalid search query.');
+  expect(() =>
+    AnalyticsController.validateIdSearchQuery(queryParameters as any)
+  ).toThrow(Error);
+  expect(() =>
+    AnalyticsController.validateIdSearchQuery(queryParameters as any)
+  ).toThrow('Invalid search query.');
 });
 
 test('validateIdSearchQuery throws Error if extra parameter exists', () => {
   const queryParameters = { tst: 123, id: '1af' };
-  expect(() => AnalyticsController.validateIdSearchQuery(queryParameters)).toThrow(Error);
+  expect(() =>
+    AnalyticsController.validateIdSearchQuery(queryParameters)
+  ).toThrow(Error);
 });
 
 test('retrievePageViews gets number of records specified by limit param', async () => {
@@ -117,7 +137,10 @@ test('retrievePageViews gets records in range specified by from and to params on
   await ctrl.updatePageView(idObj, newDateObj);
   await ctrl.storePageView('itest', '/tst');
 
-  const results = await ctrl.retrievePageViews({ from: expectedDate, to: expectedDate });
+  const results = await ctrl.retrievePageViews({
+    from: expectedDate,
+    to: expectedDate
+  });
   const receivedDate = results[0].get('date').toJSON();
 
   expect(receivedDate).toMatch(expectedDate);
