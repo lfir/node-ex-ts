@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import AnalyticsController from '../src/controller/analyticsController';
 import { IUpdPageView } from '../src/controller/pageView.interface';
 import { ESearchOptions } from '../src/controller/searchOptions.enum';
+import { mongooseOptions } from '../src/configuration/mongooseConfiguration';
 
 let mongoServer: MongoMemoryServer;
 const ctrl: AnalyticsController = new AnalyticsController();
@@ -10,7 +11,8 @@ const ctrl: AnalyticsController = new AnalyticsController();
 beforeAll(async () => {
   mongoServer = new MongoMemoryServer();
   const mongoUri = await mongoServer.getUri();
-  mongoose.connect(mongoUri);
+  mongooseOptions.ssl = false;
+  mongoose.connect(mongoUri, mongooseOptions);
 });
 
 beforeEach(() => ctrl.PageView.find().deleteMany());
@@ -172,6 +174,66 @@ test('retrievePageViews gets records in date range but no more than the limit pa
   });
 
   expect(results.length).toEqual(1);
+});
+
+test('a record can be found using its id', async () => {
+  const createdRecordId = (await ctrl.storePageView('itest', '/tst')).get(
+      '_id'
+    ),
+    idObj = { id: createdRecordId };
+
+  const foundRecordId = (await ctrl.retrievePageView(idObj)).get('_id');
+
+  expect(createdRecordId).toEqual(foundRecordId);
+});
+
+test('a record can be deleted using its id', async () => {
+  const createdRecordId = (await ctrl.storePageView('itest', '/tst')).get(
+      '_id'
+    ),
+    idObj = { id: createdRecordId };
+
+  const deletedRecordId = (await ctrl.deletePageView(idObj)).get('_id');
+
+  expect(createdRecordId).toEqual(deletedRecordId);
+});
+
+test('a record updated using an invalid date throws an error', async () => {
+  const createdRecordId = (await ctrl.storePageView('itest', '/tst')).get(
+      '_id'
+    ),
+    idObj = { id: createdRecordId },
+    newDate = 'tst',
+    newRecordObj: IUpdPageView = { date: newDate };
+
+  expect(() => {
+    ctrl.updatePageView(idObj, newRecordObj);
+  }).toThrow();
+});
+
+test('a record can be updated using its id', async () => {
+  const createdRecordId = (await ctrl.storePageView('itest', '/tst')).get(
+      '_id'
+    ),
+    idObj = { id: createdRecordId },
+    newHost = 'tst',
+    newPath = '/new',
+    newLanguage = 'de',
+    newCountry = 'jp',
+    newRecordObj: IUpdPageView = {
+      host: newHost,
+      path: newPath,
+      language: newLanguage,
+      country: newCountry
+    };
+
+  await ctrl.updatePageView(idObj, newRecordObj);
+  const updatedRecord = await ctrl.retrievePageView(idObj);
+
+  expect(updatedRecord.get('host')).toEqual(newHost);
+  expect(updatedRecord.get('path')).toEqual(newPath);
+  expect(updatedRecord.get('language')).toEqual(newLanguage);
+  expect(updatedRecord.get('country')).toEqual(newCountry);
 });
 
 afterAll(async () => {
