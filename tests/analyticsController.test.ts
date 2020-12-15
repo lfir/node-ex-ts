@@ -13,6 +13,8 @@ beforeAll(async () => {
   mongoose.connect(mongoUri);
 });
 
+beforeEach(() => ctrl.PageView.find().deleteMany());
+
 test('normalizeLanguage on an empty string is an empty string', () => {
   const lang = '';
   expect(AnalyticsController.normalizeLanguage(lang)).toBe(lang);
@@ -118,8 +120,13 @@ test('validateIdSearchQuery throws Error if extra parameter exists', () => {
   ).toThrow(Error);
 });
 
+test('validateRetrievedRecords throws Error if empty document list is received', () => {
+  expect(() => AnalyticsController.validateRetrievedRecords([])).toThrow(Error);
+});
+
 test('retrievePageViews gets number of records specified by limit param', async () => {
-  for (let i = 0; i < 3; i++) await ctrl.storePageView('itest', '/tst');
+  for (let i = 0; i < 3; i++)
+    await ctrl.storePageView('itest', '/tst', 'es-AR', '181.117.189.9');
   const datal1 = ctrl.retrievePageViews({ limit: '1' });
   const datal2 = ctrl.retrievePageViews({ limit: '2' });
 
@@ -127,6 +134,13 @@ test('retrievePageViews gets number of records specified by limit param', async 
 
   expect(results[0].length).toEqual(1);
   expect(results[1].length).toEqual(2);
+});
+
+test('retrievePageViews gets all records when no parameters are received', async () => {
+  for (let i = 0; i < 5; i++) await ctrl.storePageView('itest', '/tst');
+  const datalst = await ctrl.retrievePageViews({});
+
+  expect(datalst.length).toEqual(5);
 });
 
 test('retrievePageViews gets records in range specified by from and to params only', async () => {
@@ -144,6 +158,19 @@ test('retrievePageViews gets records in range specified by from and to params on
   const receivedDate = results[0].get('date').toJSON();
 
   expect(receivedDate).toMatch(expectedDate);
+  expect(results.length).toEqual(1);
+});
+
+test('retrievePageViews gets records in date range but no more than the limit param', async () => {
+  for (let i = 0; i < 3; i++) await ctrl.storePageView('itest', '/tst');
+
+  const today = new Date().toISOString().split('T')[0];
+  const results = await ctrl.retrievePageViews({
+    from: today,
+    to: today,
+    limit: '1'
+  });
+
   expect(results.length).toEqual(1);
 });
 
