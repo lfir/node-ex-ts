@@ -10,7 +10,8 @@ const ctrl: AnalyticsController = new AnalyticsController();
 
 beforeAll(async () => {
   mongoServer = new MongoMemoryServer();
-  const mongoUri = await mongoServer.getUri();
+  await mongoServer.start();
+  const mongoUri = mongoServer.getUri();
   mongooseOptions.ssl = false;
   mongoose.connect(mongoUri, mongooseOptions);
 });
