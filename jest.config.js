@@ -15,6 +15,7 @@ module.exports = {
         '**/tests/**/*.test.(ts|js)'
     ],
     testEnvironment: 'node',
+    testTimeout: 60000,
     coverageDirectory: './coverage/',
     collectCoverage: true
 };
