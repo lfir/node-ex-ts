@@ -1,14 +1,13 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { mongooseOptions } from '../src/configuration/mongooseConfiguration';
 import AnalyticsController from '../src/controller/analyticsController';
 import { IUpdPageView } from '../src/controller/pageView.interface';
 
 const ctrl: AnalyticsController = new AnalyticsController();
 
-beforeAll(() => {
+beforeAll(async () => {
   dotenv.config();
-  mongoose.connect(process.env.MONGO_URI, mongooseOptions);
+  await mongoose.connect(process.env.MONGO_URI);
 });
 
 test('retrievePageViews gets number of records specified by limit param', async () => {

@@ -5,7 +5,6 @@ import morgan from 'morgan';
 import path from 'path';
 import * as swaggerUi from 'swagger-ui-express';
 import * as corsConfig from './configuration/corsConfiguration';
-import { mongooseOptions } from './configuration/mongooseConfiguration';
 import { openApiDocumentation } from './configuration/openApiDocumentation';
 import AnalyticsController from './controller/analyticsController';
 
@@ -14,7 +13,7 @@ const app = express(),
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI, mongooseOptions);
+mongoose.connect(process.env.MONGO_URI);
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiDocumentation));
 app.use('/public/css', express.static(path.join(__dirname, '/public/css')));

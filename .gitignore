@@ -5,3 +5,4 @@ package-lock.json
 /dist/**/*.*
 .directory
 /coverage
+.vscode

@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import AnalyticsController from '../src/controller/analyticsController';
 import { IUpdPageView } from '../src/controller/pageView.interface';
 import { ESearchOptions } from '../src/controller/searchOptions.enum';
-import { mongooseOptions } from '../src/configuration/mongooseConfiguration';
 
 let mongoServer: MongoMemoryServer;
 const ctrl: AnalyticsController = new AnalyticsController();
@@ -12,8 +11,7 @@ beforeAll(async () => {
   mongoServer = new MongoMemoryServer();
   await mongoServer.start();
   const mongoUri = mongoServer.getUri();
-  mongooseOptions.ssl = false;
-  mongoose.connect(mongoUri, mongooseOptions);
+  await mongoose.connect(mongoUri);
 });
 
 beforeEach(() => ctrl.PageView.find().deleteMany());
