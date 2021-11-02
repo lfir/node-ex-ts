@@ -1,6 +1,0 @@
-language: node_js
-node_js:
-  - 14
-script: 
-  - npm install codecov -g
-  - npm run testCI && codecov
