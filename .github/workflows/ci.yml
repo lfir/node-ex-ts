@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ master ]
 
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,3 +26,5 @@ jobs:
         run: npm install
       - name: Run tests
         run: npm run testCI
+      - name: Upload coverage report to Codacy  
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage/lcov.info
