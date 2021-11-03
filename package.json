@@ -1,6 +1,6 @@
 {
   "name": "api-lab",
-  "version": "0.0.1",
+  "version": "0.3",
   "description": "Node.js sample app suitable for cloud containers",
   "main": "server.js",
   "dependencies": {
@@ -38,12 +38,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Asta1986/nodejs-ex"
+    "url": "https://github.com/Asta1986/node-ex-ts"
   },
   "author": "Asta1986 <psljp@protonmail.com> (https://maybelambda.cf)",
   "license": "CC-BY-1.0",
   "bugs": {
-    "url": "https://github.com/Asta1986/nodejs-ex/issues"
+    "url": "https://github.com/Asta1986/node-ex-ts/issues"
   },
   "homepage": "https://l086.herokuapp.com"
 }
